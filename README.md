@@ -4,9 +4,9 @@
 
 [![Latest stable version](https://img.shields.io/packagist/v/gautrot/propel-l10n-behavior)](https://packagist.org/packages/gautrot/propel-l10n-behavior)
 ![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.4-8892BF.svg)
-[![GitHub Actions workflow status](https://img.shields.io/github/actions/workflow/status/Gautrot/PropelL10nBehavior/ci.yml?branch=1.0&label=GitHub%20Actions%20-%20CI%20branch%201.0)](https://github.com/Gautrot/PropelL10nBehavior/actions/workflows/ci.yml)
-[![Travis CI (1.0)](https://app.travis-ci.com/Gautrot/PropelL10nBehavior.svg?branch=1.0)](https://app.travis-ci.com/Gautrot/PropelL10nBehavior)
-[![Codecov (1.0)](https://img.shields.io/codecov/c/github/gautrot/PropelL10nBehavior/1.0)](https://codecov.io/gh/gautrot/PropelL10nBehavior/tree/1.0)
+[![GitHub Actions workflow status](https://img.shields.io/github/actions/workflow/status/Gautrot/PropelL10nBehavior/ci.yml?branch=main&label=GitHub%20Actions%20-%20CI%20branch%20main)](https://github.com/Gautrot/PropelL10nBehavior/actions/workflows/ci.yml)
+[![Travis CI (main)](https://app.travis-ci.com/Gautrot/PropelL10nBehavior.svg?branch=main)](https://app.travis-ci.com/Gautrot/PropelL10nBehavior)
+[![Codecov (main)](https://img.shields.io/codecov/c/github/gautrot/PropelL10nBehavior/main)](https://codecov.io/gh/gautrot/PropelL10nBehavior/tree/main)
 
 **Propel Localization Behavior** is an extension to Propel's own i18n behavior. It puts an API in front of the i18n
 behavior and lets the user use Propel's default API but with localized content. the user provide the localization they
