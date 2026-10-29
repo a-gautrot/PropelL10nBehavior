@@ -7,10 +7,17 @@
 * [1.0.0](#100)
     * [1.0.1](#101)
     * [1.0.2](#102)
+    * [1.0.3](#103)
 
 <!-- TOC -->
 
 ---
+
+## 1.0.3
+
+### General
+
+- Optimized project's lib package with gitattributes
 
 ## 1.0.2
 
