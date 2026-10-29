@@ -17,7 +17,7 @@ want to use once (globally) and they are ready to go.
 Install via composer:
 
 ```shell
-composer require gautrot/propel-l10n-behavior
+composer require agautrot/propel-l10n-behavior
 ```
 
 Or insert the following in your composer.json file:
@@ -25,7 +25,7 @@ Or insert the following in your composer.json file:
 ```json
 {
   "require": {
-    "gautrot/propel-l10n-behavior": "~1.0"
+    "agautrot/propel-l10n-behavior": "~1.0"
   }
 }
 ```
