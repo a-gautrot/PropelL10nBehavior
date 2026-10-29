@@ -4,8 +4,8 @@
 
 [![Latest stable version](https://img.shields.io/packagist/v/gautrot/propel-l10n-behavior)](https://packagist.org/packages/gautrot/propel-l10n-behavior)
 ![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.4-8892BF.svg)
-[![GitHub Actions workflow status](https://img.shields.io/github/actions/workflow/status/Gautrot/PropelL10nBehavior/ci.yml?branch=dev&label=GitHub%20Actions%20-%20CI%20branch%20dev)](https://github.com/Gautrot/PropelL10nBehavior/actions/workflows/ci.yml)
-[![Travis CI (dev)](https://app.travis-ci.com/Gautrot/PropelL10nBehavior.svg?branch=dev)](https://app.travis-ci.com/Gautrot/PropelL10nBehavior)
+[![GitHub Actions workflow status](https://img.shields.io/github/actions/workflow/status/a-gautrot/PropelL10nBehavior/ci.yml?branch=dev&label=GitHub%20Actions%20-%20CI%20branch%20dev)](https://github.com/a-gautrot/PropelL10nBehavior/actions/workflows/ci.yml)
+[![Travis CI (dev)](https://app.travis-ci.com/a-gautrot/PropelL10nBehavior.svg?branch=dev)](https://app.travis-ci.com/a-gautrot/PropelL10nBehavior)
 [![Codecov (dev)](https://img.shields.io/codecov/c/github/gautrot/PropelL10nBehavior/dev)](https://codecov.io/gh/gautrot/PropelL10nBehavior/tree/dev)
 
 **Propel Localization Behavior** is an extension to Propel's own i18n behavior. It puts an API in front of the i18n
@@ -17,7 +17,7 @@ want to use once (globally) and they are ready to go.
 Install via composer:
 
 ```shell
-composer require agautrot/propel-l10n-behavior
+composer require a-gautrot/propel-l10n-behavior
 ```
 
 Or insert the following in your composer.json file:
@@ -25,7 +25,7 @@ Or insert the following in your composer.json file:
 ```json
 {
   "require": {
-    "agautrot/propel-l10n-behavior": "~1.0"
+    "a-gautrot/propel-l10n-behavior": "~1.0"
   }
 }
 ```
