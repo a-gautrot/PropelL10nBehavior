@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Product;
 use ProductI18nQuery;
 use ProductQuery;
-use Propel\Generator\Util\QuickBuilder;
+use Gossi\Propel\Behavior\L10n\Tests\SchemaBuilder;
 use Propel\Runtime\Exception\PropelException;
 
 /**
@@ -30,6 +30,7 @@ class ProductTest extends TestCase
 		<column name="published_at" type="date" />
 		
 		<behavior name="l10n">
+            <parameter name="locale_length" value="35" />
 			<parameter name="i18n_columns" value="title,published_at" />
 			<parameter name="locale_alias" value="language" />
 			<parameter name="use_locale_chain" value="true" />
@@ -38,7 +39,7 @@ class ProductTest extends TestCase
 </database>
 XML;
 
-            QuickBuilder::buildSchema($schema);
+            SchemaBuilder::buildSchema($schema);
         }
 
         PropelL10n::setLocale('en'); // just reset, may be changed in other tests

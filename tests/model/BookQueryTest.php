@@ -8,7 +8,7 @@ use BookQuery;
 use Gossi\Propel\Behavior\L10n\PropelL10n;
 use Map\BookTableMap;
 use PHPUnit\Framework\TestCase;
-use Propel\Generator\Util\QuickBuilder;
+use Gossi\Propel\Behavior\L10n\Tests\SchemaBuilder;
 use Propel\Runtime\Exception\PropelException;
 
 /**
@@ -30,13 +30,14 @@ class BookQueryTest extends TestCase
 		<column name="author" type="varchar" />
 	
 		<behavior name="l10n">
+            <parameter name="locale_length" value="35" />
 			<parameter name="i18n_columns" value="title" />
 		</behavior>
 	</table>
 </database>
 XML;
 
-            QuickBuilder::buildSchema($schema);
+            SchemaBuilder::buildSchema($schema);
         }
 
         PropelL10n::setLocale('en'); // just reset, may be changed in other tests

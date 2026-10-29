@@ -6,7 +6,7 @@ use CultureAliasArticle;
 use CultureAliasArticleQuery;
 use Gossi\Propel\Behavior\L10n\PropelL10n;
 use PHPUnit\Framework\TestCase;
-use Propel\Generator\Util\QuickBuilder;
+use Gossi\Propel\Behavior\L10n\Tests\SchemaBuilder;
 use ReflectionException;
 use ReflectionMethod;
 
@@ -27,6 +27,7 @@ class LocaleParameterTest extends TestCase
         <column name="title" type="varchar" />
         <column name="published_at" type="date" />
         <behavior name="l10n">
+            <parameter name="locale_length" value="35" />
             <parameter name="i18n_columns" value="title,published_at" />
         </behavior>
     </table>
@@ -35,6 +36,7 @@ class LocaleParameterTest extends TestCase
         <column name="title" type="varchar" />
         <column name="published_at" type="date" />
         <behavior name="l10n">
+            <parameter name="locale_length" value="35" />
             <parameter name="i18n_columns" value="title,published_at" />
             <parameter name="locale_alias" value="Culture" />
             <parameter name="use_locale_chain" value="false" />
@@ -45,6 +47,7 @@ class LocaleParameterTest extends TestCase
         <column name="title" type="varchar" />
         <column name="published_at" type="date" />
         <behavior name="l10n">
+            <parameter name="locale_length" value="35" />
             <parameter name="i18n_columns" value="title,published_at" />
             <parameter name="locale_column" value="culture" />
             <parameter name="use_locale_chain" value="true" />
@@ -53,7 +56,7 @@ class LocaleParameterTest extends TestCase
 </database>
 XML;
 
-        QuickBuilder::buildSchema($schema);
+        SchemaBuilder::buildSchema($schema);
     }
 
     /**

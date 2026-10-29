@@ -8,5 +8,19 @@ component_management:
       paths:
         - "templates/"
 
+flags:
+  github:
+    paths:
+      - src/
+      - templates/
+  travis:
+    paths:
+      - src/
+      - templates/
+
+ignore:
+  - tests/
+  - vendor/
+
 comment:
-  layout: "header, diff, flags, components"  # show component info in the PR comment
+  layout: "header, diff, flags, components"
