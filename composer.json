@@ -30,12 +30,12 @@
   },
   "require": {
     "ext-intl": "*",
-    "mikey179/vfsstream": "^1.6",
     "php": "^7.4||>=8.0",
     "propel/propel": "~2.0.0-beta4||^2.0"
   },
   "require-dev": {
     "ext-pdo_sqlite": "*",
+    "mikey179/vfsstream": "^1.6",
     "phpstan/phpstan": "@stable",
     "phpunit/phpunit": ">=9.6.33",
     "squizlabs/php_codesniffer": "@stable",
