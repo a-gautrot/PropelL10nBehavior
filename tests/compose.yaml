@@ -1,0 +1,35 @@
+name: propel-l10n-behavior-tests
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: l10n_test
+      MYSQL_DATABASE: l10n_behavior
+    ports: [ "127.0.0.1:33371:3306" ]
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-pl10n_test" ]
+      interval: 5s
+      timeout: 5s
+      retries: 40
+  mariadb:
+    image: mariadb:11.4
+    environment:
+      MARIADB_ROOT_PASSWORD: l10n_test
+      MARIADB_DATABASE: l10n_behavior
+    ports: [ "127.0.0.1:33372:3306" ]
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
+      interval: 5s
+      timeout: 5s
+      retries: 40
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_PASSWORD: l10n_test
+      POSTGRES_DB: l10n_behavior
+    ports: [ "127.0.0.1:35443:5432" ]
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d l10n_behavior" ]
+      interval: 5s
+      timeout: 5s
+      retries: 40

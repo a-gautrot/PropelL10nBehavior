@@ -4,8 +4,9 @@
 
 [![Latest stable version](https://img.shields.io/packagist/v/gautrot/propel-l10n-behavior)](https://packagist.org/packages/gautrot/propel-l10n-behavior)
 ![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.4-8892BF.svg)
-[![GitHub Actions workflow status](https://img.shields.io/github/actions/workflow/status/Gautrot/PropelL10nBehavior/ci.yml?branch=main&label=GitHub%20Actions%20-%20CI%20branch%20main)](https://github.com/Gautrot/PropelL10nBehavior/actions/workflows/ci.yml)
-[![Codecov](https://img.shields.io/codecov/c/github/gautrot/PropelL10nBehavior/main)](https://codecov.io/gh/gautrot/PropelL10nBehavior/tree/main)
+[![GitHub Actions workflow status](https://img.shields.io/github/actions/workflow/status/Gautrot/PropelL10nBehavior/ci.yml?branch=1.0&label=GitHub%20Actions%20-%20CI%20branch%201.0)](https://github.com/Gautrot/PropelL10nBehavior/actions/workflows/ci.yml)
+[![Travis CI (1.0)](https://app.travis-ci.com/Gautrot/PropelL10nBehavior.svg?branch=1.0)](https://app.travis-ci.com/Gautrot/PropelL10nBehavior)
+[![Codecov (1.0)](https://img.shields.io/codecov/c/github/gautrot/PropelL10nBehavior/1.0)](https://codecov.io/gh/gautrot/PropelL10nBehavior/tree/1.0)
 
 **Propel Localization Behavior** is an extension to Propel's own i18n behavior. It puts an API in front of the i18n
 behavior and lets the user use Propel's default API but with localized content. the user provide the localization they
@@ -29,16 +30,16 @@ Or insert the following in your composer.json file:
 }
 ```
 
-## Locale and Dependencies
+## Locale and dependencies
 
 When working with locales, you should know about the locales and dependencies you can define for propel-l10n-behavior.
 There are three mechanisms:
 
-- Locale (That's the default locale, when retrieving localized content from a Propel object)
+- Locale (That is the default locale, when retrieving localized content from a Propel object)
 - Dependencies (This is a dependency chain, when a field is not available in the default locale)
 - Fallback (If nothing is found, try the fallback locale)
 
-### Set Default locale
+### Set default locale
 
 Default locale is set to `en` but of course you can change this:
 
@@ -74,7 +75,7 @@ $book->setLocale('ja');
 $book->setTitle('Lord of the Rings', 'en');
 ```
 
-### Set Fallback locale
+### Set fallback locale
 
 Fallback locale also is defaulted to `en`, yet you can change that:
 
@@ -84,33 +85,33 @@ PropelL10n::setFallback('de');
 echo PropelL10n::getFallback(); // de
 ```
 
-### Working with Dependencies
+### Working with dependencies
 
 There are some API to work with dependencies:
 
 ```php
-// get and set one dependency
+// Get/set one dependency
 PropelL10n::addDependency('de-CH', 'de');
 echo PropelL10n::getDependency('de-CH'); // de
 
-// get and set all dependencies
+// Get/set all dependencies
 PropelL10n::setDependencies([
     'de'    => 'en',
     'de-CH' => 'de',
     'de-AT' => 'de'
 ]);
-print_r(PropelL10n::getDependencies()); // outputs the array from above
+print_r(PropelL10n::getDependencies()); // Outputs the array from above
 
-// check if dependencies exist
+// Check if dependencies exist
 PropelL10n::hasDependency('de'); // true
 PropelL10n::hasDepdedency('ja'); // false
 
-// count dependencies for a given locale
+// Count dependencies for a given locale
 PropelL10n::setDependencies(['de' => 'en', 'de-CH' => 'de']);
 PropelL10n::countDependencies('de-CH'); // 2
 ```
 
-### Retrieving a localized Field
+### Retrieving a localized field
 
 Whenever you retrieve a localized field, the behavior will use the following algorithm to find the contents for the
 field in the most recent locale:
@@ -160,16 +161,26 @@ locale dependencies and fallback by default:
 ```xml
 
 <behavior name="l10n">
-   <parameter name="i18n_columns" value="title"/>
-   <parameter name="use_locale_chain" value="true"/>
+    <parameter name="i18n_columns" value="title"/>
+    <parameter name="use_locale_chain" value="true"/>
 </behavior>
+```
+
+Then, build or update your Propel models:
+
+```sh
+# Regenerate Propel models after updating the schema.
+vendor/bin/propel model:build
+
+# With PropelBundle, use this command instead.
+php bin/console propel:model:build
 ```
 
 Each getter call can override this default:
 
 ```php
-$book->getTitle('de', true);  // use the locale chain
-$book->getTitle('de', false); // use only the German translation
+$book->getTitle('de', true);  // Uses the locale chain
+$book->getTitle('de', false); // Uses only the German translation
 ```
 
 ### Using the API
@@ -184,9 +195,9 @@ l10n/i18n behaviors used at all.
 Example:
 
 ```php
-PropelL10n::setLocale('de'); // this is mostly the language a user decided to use
-PropelL10n::setFallback('en'); // that's the default language of your app
-PropelL10n::setDependencies([ // that's the locales you have available
+PropelL10n::setLocale('de'); // This is mostly the language a user decided to use
+PropelL10n::setFallback('en'); // That is the default language of your app
+PropelL10n::setDependencies([ // That is the locales you have available
     'de'    => 'en'
     'de-CH' => 'de',
     'de-AT' => 'de',
@@ -196,7 +207,7 @@ PropelL10n::setDependencies([ // that's the locales you have available
 
 And you are ready to go.
 
-#### Retrieving from Objects
+#### Retrieving from objects
 
 ```php
 $book = new Book();
@@ -212,52 +223,51 @@ echo $book->getTitle(); // Herr der Ringe
 echo $book->getTitle('ja-JP'); // Lord of the Rings - using fallback locale (`en`)
 ```
 
-#### Querying the Database
+#### Querying the database
 
 You can use your well known methods to query the database:
 
 ```php
-// default locale: de
+// Default locale: de
 
-// contains all books with a german title starting with 'Die Tribute von Panem'
+// Contains all books with a German title starting with 'Die Tribute von Panem'
 $books = BookQuery::create()
     ->filterByTitle('Die Tribute von Panem%')
     ->find();
 $books = ...; 
 
-// the book lord of the rings as searched with an english title name
+// The book "Lord of the Rings" as searched with an English title name
 $book = BookQuery::create()
     ->findOneByTitle('Lord of the Rings', null, 'en');
 $book = ...; 
 
-// all Hunger Games books searched with the japanese title
+// All "Hunger Games" books searched with the Japanese title
 $books = BookQuery::create()
     ->setLocale('ja')               // overwrites query default locale
     ->findByTitle('Hangā Gēmu%');
 $books = ...;
 
-// find lord of the rings with the japanese title, overwrite locale with the filter method
+// Finds "Lord of the Rings" with the Japanese title, overwrite locale with the filter method
 $book = BookQuery::create()
     ->findOneByTitle('Yubiwa Monogatari', null, 'ja');
 $book = ...;
 ```
 
-## Best Practices
+## Best practices
 
 **Use the shortest locale possible!** Only use a longer language-tag, when it is necessary to be more specific. If there
 is no need, just go with `de` instead of `de-DE` (which is kind of redundant anyway). However, go with `de` and `de-CH`
-as there might be content available which is different for people in germany or switzerland (e.g. a contact address, one
-for germany the other for switzerland).
+as there might be content available which is different for people in Germany or Switzerland (e.g. a contact address, one
+for Germany the other for Switzerland).
 
 ## Performance
 
-This may be a performance nightmare. Only Propel API methods are used, means no manual queries so far. Performance
-optimization can begin after Propel will merge the `data-mapper` branch into `master`. Suggestions are welcome, please
-post the to the issue tracker.
+This may be a performance nightmare. Only Propel API methods are used, means no manual queries so far. Suggestions are
+welcome, please post the to the issue tracker.
 
 ## References
 
-There's a lot of material about localization, language-tags. Sometimes it is about finding the right subtag, which can
+There are a lot of material about localization, language-tags. Sometimes it is about finding the right subtag, which can
 be complicated enough. Here are some good references:
 
 - [Language Tags](https://www.w3.org/International/articles/language-tags/)

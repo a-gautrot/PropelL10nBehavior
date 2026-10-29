@@ -1,24 +1,24 @@
 name: GitHub Actions - CI branch main
 
-on:
-  push:
-    branches:
-      - 'main'
-  pull_request:
-    branches:
-      - 'main'
-  workflow_dispatch:
+on: [push, pull_request, workflow_dispatch]
+
 permissions:
   contents: read
 
 jobs:
-  testsuite_linux_arm:
-    name: "Test Suite (Linux arm64)"
-    runs-on: ubuntu-26.04-arm
+  sqlite:
+    name: sqlite / ${{ matrix.os }} / php ${{ matrix.php }}
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        php-version:
+        os:
+          - ubuntu-26.04
+          - ubuntu-26.04-arm
+          - windows-2025
+          - windows-11-arm
+          - macos-26
+        php:
           - '7.4'
           - '8.0'
           - '8.1'
@@ -26,283 +26,78 @@ jobs:
           - '8.3'
           - '8.4'
           - '8.5'
-
+        include:
+          - php: '7.4'
+            os: ubuntu-26.04
+            dependencies: lowest
+          - php: '8.5'
+            os: macos-26-intel
     steps:
-      - name: Setup PHP, with composer and extensions
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
-        with:
-          php-version: ${{ matrix.php-version }}
-          coverage: pcov
-
-      - name: Checkout
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-
-      - name: Composer get cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Composer cache dependencies
-        uses: actions/cache@v6
+      - uses: shivammathur/setup-php@v2
         with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: Install Composer dependencies
-        run: composer i -n --prefer-dist --no-progress
-
-      - name: Run tests with PHPs >= 8.1
-        if: matrix.php-version >= '8.1'
-        run: vendor/bin/phpunit --display-deprecations --display-notices --display-warnings --coverage-clover=tests/coverage.xml --log-junit=tests/junit.xml
-
-      - name: Run tests with PHPs < 8.1
-        if: matrix.php-version < '8.1'
-        run: vendor/bin/phpunit --configuration phpunit-legacy.dist.xml --verbose --coverage-clover=tests/coverage.xml --log-junit=tests/junit.xml
-
-      - name: Code Coverage Report
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: ./tests/
-          files: ./tests/coverage.xml
-          fail_ci_if_error: true
-          verbose: true
-
-      - name: Upload test results to Codecov
-        if: ${{ !cancelled() }}
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          report_type: test_results
-          files: ./tests/junit.xml
-          disable_search: true
-          fail_ci_if_error: true
-          verbose: true
-
-  testsuite_linux:
-    name: "Test Suite (Linux x64)"
-    runs-on: ubuntu-26.04
-    strategy:
-      fail-fast: false
-      matrix:
-        php-version:
-          - '7.4'
-          - '8.0'
-          - '8.1'
-          - '8.2'
-          - '8.3'
-          - '8.4'
-          - '8.5'
-
-    steps:
-      - name: Setup PHP, with composer and extensions
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
-        with:
-          php-version: ${{ matrix.php-version }}
-          coverage: pcov
-
-      - name: Checkout
-        uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-
-      - name: Composer get cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Composer cache dependencies
-        uses: actions/cache@v6
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: Install Composer dependencies
-        run: composer i -n --prefer-dist --no-progress
-
-      - name: Run tests with PHPs >= 8.1
-        if: matrix.php-version >= '8.1'
-        run: vendor/bin/phpunit --display-deprecations --display-notices --display-warnings --coverage-clover=tests/coverage.xml --log-junit=tests/junit.xml
-
-      - name: Run tests with PHPs < 8.1
-        if: matrix.php-version < '8.1'
-        run: vendor/bin/phpunit --configuration phpunit-legacy.dist.xml --verbose --coverage-clover=tests/coverage.xml --log-junit=tests/junit.xml
-
-      - name: Code Coverage Report
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: ./tests/
-          files: ./tests/coverage.xml
-          fail_ci_if_error: true
-          verbose: true
-
-      - name: Upload test results to Codecov
-        if: ${{ !cancelled() }}
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          report_type: test_results
-          files: ./tests/junit.xml
-          disable_search: true
-          fail_ci_if_error: true
-          verbose: true
-
-  testsuite_win_arm:
-    name: "Test Suite (Windows arm64)"
-    runs-on: windows-11-arm
-    defaults:
-      run:
-        shell: bash # https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#defaultsrunshell
-    strategy:
-      fail-fast: false
-      matrix:
-        php-version:
-          - '7.4'
-          - '8.0'
-          - '8.1'
-          - '8.2'
-          - '8.3'
-          - '8.4'
-          - '8.5'
-
-    steps:
-      - name: Setup PHP, with composer and extensions
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
-        with:
-          php-version: ${{ matrix.php-version }}
+          php-version: ${{ matrix.php }}
           extensions: intl, pdo_sqlite
-          coverage: pcov
+          coverage: none
+      - name: Install dependencies
+        if: matrix.dependencies != 'lowest'
+        run: composer u -n --prefer-dist --no-progress --prefer-stable
+      - name: Install lowest supported dependencies
+        if: matrix.dependencies == 'lowest'
+        run: composer u --with propel/propel:2.0.0-beta4 -n --prefer-dist --no-progress --prefer-lowest --prefer-stable
+      - run: composer validate --strict
+      - run: composer test
 
-      - name: Checkout
-        uses: actions/checkout@v7
+  coverage:
+    name: coverage / php 8.4
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-
-      - name: Composer get cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Composer cache dependencies
-        uses: actions/cache@v6
+      - uses: shivammathur/setup-php@v2
         with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: Install Composer dependencies
-        run: composer i -n --prefer-dist --no-progress
-
-      - name: Run tests with PHPs >= 8.1
-        if: matrix.php-version >= '8.1'
-        run: vendor/bin/phpunit --display-deprecations --display-notices --display-warnings --coverage-clover=tests/coverage.xml --log-junit=tests/junit.xml
-
-      - name: Run tests with PHPs < 8.1
-        if: matrix.php-version < '8.1'
-        run: vendor/bin/phpunit --configuration phpunit-legacy.dist.xml --verbose --coverage-clover=tests/coverage.xml --log-junit=tests/junit.xml
-
-      - name: Code Coverage Report
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: ./tests/
-          files: ./tests/coverage.xml
-          fail_ci_if_error: true
-          verbose: true
-
-      - name: Upload test results to Codecov
-        if: ${{ !cancelled() }}
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          report_type: test_results
-          files: ./tests/junit.xml
-          disable_search: true
-          fail_ci_if_error: true
-          verbose: true
-
-  testsuite_win:
-    name: "Test Suite (Windows x64)"
-    runs-on: windows-2025
-    defaults:
-      run:
-        shell: bash # https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#defaultsrunshell
-    strategy:
-      fail-fast: false
-      matrix:
-        php-version:
-          - '7.4'
-          - '8.0'
-          - '8.1'
-          - '8.2'
-          - '8.3'
-          - '8.4'
-          - '8.5'
-
-    steps:
-      - name: Setup PHP, with composer and extensions
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
-        with:
-          php-version: ${{ matrix.php-version }}
+          php-version: '8.4'
           extensions: intl, pdo_sqlite
-          coverage: pcov
-
-      - name: Checkout
-        uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-
-      - name: Composer get cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Composer cache dependencies
-        uses: actions/cache@v6
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: Install Composer dependencies
-        run: composer i -n --prefer-dist --no-progress
-
-      - name: Run tests with PHPs >= 8.1
-        if: matrix.php-version >= '8.1'
-        run: vendor/bin/phpunit --display-deprecations --display-notices --display-warnings --coverage-clover=tests/coverage.xml --log-junit=tests/junit.xml
-
-      - name: Run tests with PHPs < 8.1
-        if: matrix.php-version < '8.1'
-        run: vendor/bin/phpunit --configuration phpunit-legacy.dist.xml --verbose --coverage-clover=tests/coverage.xml --log-junit=tests/junit.xml
-
-      - name: Code Coverage Report
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f
+          coverage: xdebug
+      - run: composer u -n --prefer-dist --no-progress --prefer-stable
+      - run: composer test:coverage
+        env:
+          XDEBUG_MODE: coverage
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: ./tests/
-          files: ./tests/coverage.xml
+          files: tests/coverage.xml
+          disable_search: true
+          flags: github
+          name: github-php-8.4
           fail_ci_if_error: true
-          verbose: true
-
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           report_type: test_results
-          files: ./tests/junit.xml
+          files: tests/junit.xml
           disable_search: true
           fail_ci_if_error: true
-          verbose: true
 
-  testsuite_macos:
-    name: "Test Suite (macOS arm64)"
-    runs-on: macos-26
+  mysql:
+    name: mysql / ${{ matrix.os }} / php ${{ matrix.php }}
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        php-version:
+        os:
+          - ubuntu-26.04
+          - ubuntu-26.04-arm
+          - windows-2025
+          - macos-26
+          - macos-26-intel
+        php:
           - '7.4'
           - '8.0'
           - '8.1'
@@ -310,120 +105,132 @@ jobs:
           - '8.3'
           - '8.4'
           - '8.5'
-
     steps:
-      - name: Setup PHP, with composer and extensions
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
-        with:
-          php-version: ${{ matrix.php-version }}
-          coverage: pcov
-
-      - name: Checkout
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-
-      - name: Composer get cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Composer cache dependencies
-        uses: actions/cache@v6
+      - uses: shivammathur/setup-php@v2
         with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: Install Composer dependencies
-        run: composer i -n --prefer-dist --no-progress
-
-      - name: Run tests with PHPs >= 8.1
-        if: matrix.php-version >= '8.1'
-        run: vendor/bin/phpunit --display-deprecations --display-notices --display-warnings --coverage-clover=tests/coverage.xml --log-junit=tests/junit.xml
-
-      - name: Run tests with PHPs < 8.1
-        if: matrix.php-version < '8.1'
-        run: vendor/bin/phpunit --configuration phpunit-legacy.dist.xml --verbose --coverage-clover=tests/coverage.xml --log-junit=tests/junit.xml
-
-      - name: Code Coverage Report
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f
+          php-version: ${{ matrix.php }}
+          extensions: intl, pdo_mysql, pdo_sqlite
+          coverage: none
+      - run: composer u -n --prefer-dist --no-progress --prefer-stable
+      - name: Start MySQL with Docker on Linux
+        if: runner.os == 'Linux'
+        run: docker compose -f tests/compose.yaml up -d --wait mysql
+      - name: Start native MySQL
+        if: runner.os != 'Linux'
+        uses: ankane/setup-mysql@v1
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: ./tests/
-          files: ./tests/coverage.xml
-          fail_ci_if_error: true
-          verbose: true
+          mysql-version: '8.4'
+          database: l10n_behavior
+          user: ci
+      - name: Test MySQL
+        run: composer test
+        env:
+          TEST_DSN: mysql:host=127.0.0.1;port=${{ runner.os == 'Linux' && '33371' || '3306' }};dbname=l10n_behavior
+          TEST_USER: ${{ runner.os == 'Linux' && 'root' || 'ci' }}
+          TEST_PASSWORD: ${{ runner.os == 'Linux' && 'l10n_test' || '' }}
+      - name: Stop test databases
+        if: ${{ always() && runner.os == 'Linux' }}
+        run: docker compose -f tests/compose.yaml down --volumes
 
-      - name: Upload test results to Codecov
-        if: ${{ !cancelled() }}
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          report_type: test_results
-          files: ./tests/junit.xml
-          disable_search: true
-          fail_ci_if_error: true
-          verbose: true
-
-  testsuite_macos_intel:
-    name: "Test Suite (macOS Intel)"
-    runs-on: macos-26-intel
+  mariadb:
+    name: mariadb / ${{ matrix.os }} / php ${{ matrix.php }}
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        php-version:
+        os:
+          - ubuntu-26.04
+          - ubuntu-26.04-arm
+          - windows-2025
+          - macos-26
+          - macos-26-intel
+        php:
+          - '7.4'
+          - '8.0'
+          - '8.1'
+          - '8.2'
+          - '8.3'
+          - '8.4'
           - '8.5'
-
     steps:
-      - name: Setup PHP, with composer and extensions
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
-        with:
-          php-version: ${{ matrix.php-version }}
-          coverage: pcov
-
-      - name: Checkout
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-
-      - name: Composer get cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Composer cache dependencies
-        uses: actions/cache@v6
+      - uses: shivammathur/setup-php@v2
         with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: Install Composer dependencies
-        run: composer i -n --prefer-dist --no-progress
-
-      - name: Run tests with PHPs >= 8.1
-        if: matrix.php-version >= '8.1'
-        run: vendor/bin/phpunit --display-deprecations --display-notices --display-warnings --coverage-clover=tests/coverage.xml --log-junit=tests/junit.xml
-
-      - name: Run tests with PHPs < 8.1
-        if: matrix.php-version < '8.1'
-        run: vendor/bin/phpunit --configuration phpunit-legacy.dist.xml --verbose --coverage-clover=tests/coverage.xml --log-junit=tests/junit.xml
-
-      - name: Code Coverage Report
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f
+          php-version: ${{ matrix.php }}
+          extensions: intl, pdo_mysql, pdo_sqlite
+          coverage: none
+      - run: composer u -n --prefer-dist --no-progress --prefer-stable
+      - name: Start MariaDB with Docker on Linux
+        if: runner.os == 'Linux'
+        run: docker compose -f tests/compose.yaml up -d --wait mariadb
+      - name: Start native MariaDB
+        if: runner.os != 'Linux'
+        uses: ankane/setup-mariadb@v1
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: ./tests/
-          files: ./tests/coverage.xml
-          fail_ci_if_error: true
-          verbose: true
+          mariadb-version: '11.4'
+          database: l10n_behavior
+          user: ci
+      - name: Test MariaDB
+        run: composer test
+        env:
+          TEST_DSN: mysql:host=127.0.0.1;port=${{ runner.os == 'Linux' && '33372' || '3306' }};dbname=l10n_behavior
+          TEST_USER: ${{ runner.os == 'Linux' && 'root' || 'ci' }}
+          TEST_PASSWORD: ${{ runner.os == 'Linux' && 'l10n_test' || '' }}
+      - name: Stop test databases
+        if: ${{ always() && runner.os == 'Linux' }}
+        run: docker compose -f tests/compose.yaml down --volumes
 
-      - name: Upload test results to Codecov
-        if: ${{ !cancelled() }}
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f
+  postgres:
+    name: postgres / ${{ matrix.os }} / php ${{ matrix.php }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-26.04
+          - ubuntu-26.04-arm
+          - windows-2025
+          - macos-26
+          - macos-26-intel
+        php:
+          - '7.4'
+          - '8.0'
+          - '8.1'
+          - '8.2'
+          - '8.3'
+          - '8.4'
+          - '8.5'
+    steps:
+      - uses: actions/checkout@v7
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          report_type: test_results
-          files: ./tests/junit.xml
-          disable_search: true
-          fail_ci_if_error: true
-          verbose: true
+          persist-credentials: false
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: intl, pdo_pgsql, pdo_sqlite
+          coverage: none
+      - run: composer u -n --prefer-dist --no-progress --prefer-stable
+      - name: Start PostgreSQL with Docker on Linux
+        if: runner.os == 'Linux'
+        run: docker compose -f tests/compose.yaml up -d --wait postgres
+      - name: Start native PostgreSQL
+        if: runner.os != 'Linux'
+        uses: ankane/setup-postgres@v1
+        with:
+          postgres-version: '17'
+          database: l10n_behavior
+          user: ci
+      - name: Test PostgreSQL
+        run: composer test
+        env:
+          TEST_DSN: pgsql:host=127.0.0.1;port=${{ runner.os == 'Linux' && '35443' || '5432' }};dbname=l10n_behavior
+          TEST_USER: ${{ runner.os == 'Linux' && 'postgres' || 'ci' }}
+          TEST_PASSWORD: ${{ runner.os == 'Linux' && 'l10n_test' || '' }}
+      - name: Stop test databases
+        if: ${{ always() && runner.os == 'Linux' }}
+        run: docker compose -f tests/compose.yaml down --volumes

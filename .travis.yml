@@ -1,20 +1,58 @@
 language: php
+dist: jammy
 
 php:
-  - 7.4
-  - 8.0
-  - 8.1
-  - 8.2
-  - 8.3
-  - 8.4
-  - 8.5
+  - '8.1'
+  - '8.2'
+  - '8.3'
+  - '8.4'
+  - '8.5'
+
+env:
+  global:
+    - XDEBUG_MODE=off
+    - COVERAGE=0
+
+jobs:
+  include:
+    - php: '7.4'
+      dist: focal
+    - php: '8.0'
+      dist: focal
+    - name: Coverage / PHP 8.4
+      php: '8.4'
+      env: COVERAGE=1 XDEBUG_MODE=coverage
+      addons:
+        apt:
+          packages:
+            - python3-venv
+
+cache:
+  directories:
+    - $HOME/.cache/composer
+
+before_install:
+  - composer selfupdate --2
 
 install:
-  - composer i
+  - composer u -n --prefer-dist --no-progress --prefer-stable
 
 script:
-  - phpunit --coverage-clover=coverage.clover
+  - composer validate --strict
+  - |
+    if [ "$COVERAGE" = "1" ]; then
+      php --ri xdebug
+      php --ri intl
+      php --ri pdo_sqlite
+      composer test:coverage
+    else
+      composer test
+    fi
 
-#after_script:
-#  - wget https://scrutinizer-ci.com/ocular.phar
-#  - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+after_success:
+  - |
+    if [ "$COVERAGE" = "1" ]; then
+      python3 -m venv /tmp/propel-l10n-codecov
+      /tmp/propel-l10n-codecov/bin/pip install codecov-cli
+      /tmp/propel-l10n-codecov/bin/codecovcli --auto-load-params-from Travis upload-process --file tests/coverage.xml --disable-search --flag travis --name travis-php-8.4
+    fi

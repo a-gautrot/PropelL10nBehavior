@@ -29,22 +29,25 @@
     }
   },
   "require": {
-    "php": "^7.4||>=8.0",
     "ext-intl": "*",
-    "propel/propel": "~2.0.0-beta4||^2.0",
-    "mikey179/vfsstream": "dev-master"
+    "mikey179/vfsstream": "^1.6",
+    "php": "^7.4||>=8.0",
+    "propel/propel": "~2.0.0-beta4||^2.0"
   },
   "require-dev": {
-    "phpunit/phpunit": ">=9.6.33",
+    "ext-pdo_sqlite": "*",
     "phpstan/phpstan": "@stable",
-    "vimeo/psalm": "@stable",
-    "squizlabs/php_codesniffer": "@stable"
+    "phpunit/phpunit": ">=9.6.33",
+    "squizlabs/php_codesniffer": "@stable",
+    "vimeo/psalm": "@stable"
   },
   "extra": {
     "name": "l10n",
     "class": "\\Gossi\\Propel\\Behavior\\L10n\\L10nBehavior"
   },
   "scripts": {
+    "test": "@php tests/run.php",
+    "test:coverage": "@test --coverage-clover tests/coverage.xml --log-junit tests/junit.xml",
     "phpstan": "vendor/bin/phpstan analyse -c phpstan.dist.neon",
     "psalm": "vendor/bin/psalm --config=psalm.dist.xml",
     "phpcs": "phpcs --standard=PSR2 src"
