@@ -1,5 +1,5 @@
 {
-  "name": "agautrot/propel-l10n-behavior",
+  "name": "a-gautrot/propel-l10n-behavior",
   "description": "Integration of localization (l10n) in Propel",
   "type": "propel-behavior",
   "license": "MIT",
