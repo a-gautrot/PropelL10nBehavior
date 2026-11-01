@@ -3,13 +3,14 @@
 namespace model;
 
 use Gossi\Propel\Behavior\L10n\PropelL10n;
+use Gossi\Propel\Behavior\L10n\Tests\SchemaBuilder;
 use Map\ProductTableMap;
 use PHPUnit\Framework\TestCase;
 use Product;
 use ProductI18nQuery;
 use ProductQuery;
-use Gossi\Propel\Behavior\L10n\Tests\SchemaBuilder;
 use Propel\Runtime\Exception\PropelException;
+use Random\RandomException;
 
 /**
  * # ProductTest
@@ -18,6 +19,7 @@ class ProductTest extends TestCase
 {
     /**
      * @return void
+     * @throws RandomException
      */
     public static function setUpBeforeClass(): void
     {
@@ -42,14 +44,17 @@ XML;
             SchemaBuilder::buildSchema($schema);
         }
 
-        PropelL10n::setLocale('en'); // just reset, may be changed in other tests
+        // just reset, may be changed in other tests
+        PropelL10n::setLocale('en');
         PropelL10n::setFallback('en');
-        PropelL10n::setDependencies([
-            'de-CH' => 'de-DE',
-            'de-AT' => 'de-DE',
-            'de-DE' => 'en-US',
-            'ja' => 'en-US'
-        ]);
+        PropelL10n::setDependencies(
+            [
+                'de-CH' => 'de-DE',
+                'de-AT' => 'de-DE',
+                'de-DE' => 'en-US',
+                'ja' => 'en-US'
+            ]
+        );
     }
 
     /**
@@ -323,7 +328,7 @@ XML;
                 $p->setLocale($locale);
             }
 
-            $removedLocale = $locale ?? 'en';
+            $removedLocale = ($locale ?? 'en');
             $translation = $p->getTranslation($removedLocale);
             $p->removeTranslation();
 

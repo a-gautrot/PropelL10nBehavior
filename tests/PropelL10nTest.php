@@ -97,10 +97,12 @@ class PropelL10nTest extends TestCase
     public function testLocaleChain(): void
     {
         PropelL10n::setFallback('fr_FR');
-        PropelL10n::setDependencies([
-            'de-CH' => 'de-DE',
-            'de-DE' => 'en-US',
-        ]);
+        PropelL10n::setDependencies(
+            [
+                'de-CH' => 'de-DE',
+                'de-DE' => 'en-US',
+            ]
+        );
 
         self::assertSame('en-US', PropelL10n::getDependency('de-DE'));
         self::assertSame(
@@ -114,10 +116,12 @@ class PropelL10nTest extends TestCase
      */
     public function testLocaleChainCycle(): void
     {
-        PropelL10n::setDependencies([
-            'de-CH' => 'de-DE',
-            'de-DE' => 'de-CH',
-        ]);
+        PropelL10n::setDependencies(
+            [
+                'de-CH' => 'de-DE',
+                'de-DE' => 'de-CH',
+            ]
+        );
 
         self::assertSame(
             ['de-CH', 'de-DE', 'de', 'en'],

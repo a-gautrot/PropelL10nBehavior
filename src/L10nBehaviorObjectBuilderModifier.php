@@ -24,11 +24,14 @@ class L10nBehaviorObjectBuilderModifier extends I18nBehaviorObjectBuilderModifie
      */
     public function objectAttributes(ObjectBuilder $builder): string
     {
-        return $this->renderTemplate('objectAttributes', [
+        return $this->renderTemplate(
+            'objectAttributes',
+            [
             'objectClassName' => $builder->getClassNameFromBuilder(
                 $builder->getNewStubObjectBuilder($this->behavior->getI18nTable())
             ),
-        ]);
+            ]
+        );
     }
 
     /**
@@ -76,10 +79,13 @@ class L10nBehaviorObjectBuilderModifier extends I18nBehaviorObjectBuilderModifie
      */
     protected function addSetLocale(): string
     {
-        return $this->renderTemplate('objectSetLocale', [
+        return $this->renderTemplate(
+            'objectSetLocale',
+            [
             'objectClassName' => $this->builder->getClassNameFromBuilder($this->builder->getStubObjectBuilder()),
             'localeColumnName' => $this->behavior->getLocaleColumn()->getPhpName(),
-        ]);
+            ]
+        );
     }
 
     /**
@@ -87,9 +93,12 @@ class L10nBehaviorObjectBuilderModifier extends I18nBehaviorObjectBuilderModifie
      */
     protected function addGetLocale(): string
     {
-        return $this->renderTemplate('objectGetLocale', [
+        return $this->renderTemplate(
+            'objectGetLocale',
+            [
             'localeColumnName' => $this->behavior->getLocaleColumn()->getPhpName(),
-        ]);
+            ]
+        );
     }
 
     /**
@@ -97,9 +106,12 @@ class L10nBehaviorObjectBuilderModifier extends I18nBehaviorObjectBuilderModifie
      */
     protected function addResolveLocale(): string
     {
-        return $this->renderTemplate('objectResolveLocale', [
+        return $this->renderTemplate(
+            'objectResolveLocale',
+            [
             'localeColumnName' => $this->behavior->getLocaleColumn()->getPhpName(),
-        ]);
+            ]
+        );
     }
 
     /**
@@ -108,10 +120,13 @@ class L10nBehaviorObjectBuilderModifier extends I18nBehaviorObjectBuilderModifie
      */
     protected function addGetLocaleAlias(string $alias): string
     {
-        return $this->renderTemplate('objectGetLocaleAlias', [
+        return $this->renderTemplate(
+            'objectGetLocaleAlias',
+            [
             'alias' => ucfirst($alias),
             'localeColumnName' => $this->behavior->getLocaleColumn()->getPhpName(),
-        ]);
+            ]
+        );
     }
 
     /**
@@ -120,11 +135,14 @@ class L10nBehaviorObjectBuilderModifier extends I18nBehaviorObjectBuilderModifie
      */
     protected function addSetLocaleAlias(string $alias): string
     {
-        return $this->renderTemplate('objectSetLocaleAlias', [
+        return $this->renderTemplate(
+            'objectSetLocaleAlias',
+            [
             'objectClassName' => $this->builder->getClassNameFromBuilder($this->builder->getStubObjectBuilder()),
             'alias' => ucfirst($alias),
             'localeColumnName' => $this->behavior->getLocaleColumn()->getPhpName(),
-        ]);
+            ]
+        );
     }
 
     /**
@@ -135,7 +153,9 @@ class L10nBehaviorObjectBuilderModifier extends I18nBehaviorObjectBuilderModifie
         $i18nTable = $this->behavior->getI18nTable();
         $fk = $this->behavior->getI18nForeignKey();
 
-        return $this->renderTemplate('objectGetTranslation', [
+        return $this->renderTemplate(
+            'objectGetTranslation',
+            [
             'i18nTablePhpName' => $this->builder->getClassNameFromBuilder(
                 $this->builder->getNewStubObjectBuilder($i18nTable)
             ),
@@ -145,7 +165,8 @@ class L10nBehaviorObjectBuilderModifier extends I18nBehaviorObjectBuilderModifie
                 $this->builder->getNewStubQueryBuilder($i18nTable)
             ),
             'i18nSetterMethod' => $this->builder->getRefFKPhpNameAffix($fk),
-        ]);
+            ]
+        );
     }
 
     /**
@@ -156,14 +177,17 @@ class L10nBehaviorObjectBuilderModifier extends I18nBehaviorObjectBuilderModifie
         $i18nTable = $this->behavior->getI18nTable();
         $fk = $this->behavior->getI18nForeignKey();
 
-        return $this->renderTemplate('objectRemoveTranslation', [
+        return $this->renderTemplate(
+            'objectRemoveTranslation',
+            [
             'objectClassName' => $this->builder->getClassNameFromBuilder($this->builder->getStubObjectBuilder()),
             'i18nQueryName' => $this->builder->getClassNameFromBuilder(
                 $this->builder->getNewStubQueryBuilder($i18nTable)
             ),
             'i18nCollection' => $this->builder->getRefFKCollVarName($fk),
             'localeColumnName' => $this->behavior->getLocaleColumn()->getPhpName(),
-        ]);
+            ]
+        );
     }
 
     /**
@@ -171,12 +195,15 @@ class L10nBehaviorObjectBuilderModifier extends I18nBehaviorObjectBuilderModifie
      */
     protected function addGetCurrentTranslation(): string
     {
-        return $this->renderTemplate('objectGetCurrentTranslation', [
+        return $this->renderTemplate(
+            'objectGetCurrentTranslation',
+            [
             'i18nTablePhpName' => $this->builder->getClassNameFromBuilder(
                 $this->builder->getNewStubObjectBuilder($this->behavior->getI18nTable())
             ),
             'localeColumnName' => $this->behavior->getLocaleColumn()->getPhpName(),
-        ]);
+            ]
+        );
     }
 
     /**
@@ -221,13 +248,16 @@ class L10nBehaviorObjectBuilderModifier extends I18nBehaviorObjectBuilderModifie
             $functionStatement = str_replace(')', ", $localeParameter)", $functionStatement);
         }
 
-        return $this->renderTemplate('objectTranslatedColumnGetter', [
+        return $this->renderTemplate(
+            'objectTranslatedColumnGetter',
+            [
             'comment' => $comment,
             'functionStatement' => $functionStatement,
             'columnPhpName' => $column->getPhpName(),
             'params' => implode(', ', $params[0]),
             'localeColumnName' => $this->behavior->getLocaleColumn()->getPhpName()
-        ]);
+            ]
+        );
     }
 
     /**
@@ -262,13 +292,16 @@ class L10nBehaviorObjectBuilderModifier extends I18nBehaviorObjectBuilderModifie
         // Adds the locale parameter to the setter parameters
         $functionStatement = str_replace(')', ", $localeParameter)", $functionStatement);
 
-        return $this->renderTemplate('objectTranslatedColumnSetter', [
+        return $this->renderTemplate(
+            'objectTranslatedColumnSetter',
+            [
             'comment' => $comment,
             'functionStatement' => $functionStatement,
             'columnPhpName' => $column->getPhpName(),
             'params' => implode(', ', $params[0]),
             'localeColumnName' => $this->behavior->getLocaleColumn()->getPhpName()
-        ]);
+            ]
+        );
     }
 
     /**
@@ -282,11 +315,16 @@ class L10nBehaviorObjectBuilderModifier extends I18nBehaviorObjectBuilderModifie
         $i18nTablePhpName = $builder->getNewStubObjectBuilder($i18nTable)->getUnprefixedClassName();
         $pattern = '/public function add' . preg_quote($i18nTablePhpName, '/') . '.*[\r\n]\s*\{/';
         // Adds this chunk of code in "add...I18n" to check if we're using the default or alias var name
-        $addition = $this->renderTemplate('objectAddTranslation', [
-            'localeColumnName' => $this->behavior->getLocaleColumn()->getPhpName(),
-        ]);
-        $script = preg_replace_callback($pattern, static function (array $matches) use ($addition): string {
-            return $matches[0] . "\n" . $addition;
-        }, $script);
+        $addition = $this->renderTemplate(
+            'objectAddTranslation',
+            [
+                'localeColumnName' => $this->behavior->getLocaleColumn()->getPhpName(),
+            ]
+        );
+        $script = preg_replace_callback(
+            $pattern,
+            static fn(array $matches): string => $matches[0] . "\n" . $addition,
+            $script
+        );
     }
 }
