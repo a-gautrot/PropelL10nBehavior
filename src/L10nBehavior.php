@@ -30,7 +30,7 @@ class L10nBehavior extends I18nBehavior
     /**
      * @var string|null
      */
-    protected ?string $templateDirnameBackup;
+    protected ?string $templateDirnameBackup = null;
 
     /**
      * @var L10nBehaviorObjectBuilderModifier|null
@@ -82,9 +82,7 @@ class L10nBehavior extends I18nBehavior
      */
     public function getObjectBuilderModifier(): ?L10nBehaviorObjectBuilderModifier
     {
-        if ($this->objectBuilderModifier === null) {
-            $this->objectBuilderModifier = new L10nBehaviorObjectBuilderModifier($this);
-        }
+        $this->objectBuilderModifier ??= new L10nBehaviorObjectBuilderModifier($this);
 
         return $this->objectBuilderModifier;
     }
@@ -94,9 +92,7 @@ class L10nBehavior extends I18nBehavior
      */
     public function getQueryBuilderModifier(): ?L10nBehaviorQueryBuilderModifier
     {
-        if ($this->queryBuilderModifier === null) {
-            $this->queryBuilderModifier = new L10nBehaviorQueryBuilderModifier($this);
-        }
+        $this->queryBuilderModifier ??= new L10nBehaviorQueryBuilderModifier($this);
 
         return $this->queryBuilderModifier;
     }
