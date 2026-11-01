@@ -221,8 +221,11 @@ class L10nBehaviorQueryBuilderModifier extends I18nBehaviorQueryBuilderModifier
         return $this->renderTemplate(
             'queryUseI18nQuery',
             [
-                'queryClass' => $this->builder->getClassNameFromBuilder($this->builder->getNewStubQueryBuilder($i18nTable)),
-                'namespacedQueryClass' => $this->builder->getNewStubQueryBuilder($i18nTable)->getFullyQualifiedClassName(),
+                'queryClass' => $this->builder->getClassNameFromBuilder(
+                    $this->builder->getNewStubQueryBuilder($i18nTable)
+                ),
+                'namespacedQueryClass' => $this->builder->getNewStubQueryBuilder($i18nTable)
+                    ->getFullyQualifiedClassName(),
                 'i18nRelationName' => $this->builder->getRefFKPhpNameAffix($fk),
                 'localeColumn' => $this->behavior->getLocaleColumn()->getPhpName(),
             ]
