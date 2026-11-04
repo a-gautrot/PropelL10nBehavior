@@ -10,7 +10,7 @@ use Gautrot\Propel\Behavior\L10n\Tests\SchemaBuilder;
 use Map\BookTableMap;
 use PHPUnit\Framework\TestCase;
 use Propel\Runtime\Exception\PropelException;
-use Random\RandomException;
+use Exception;
 
 /**
  * # BookQueryTest
@@ -19,7 +19,7 @@ class BookQueryTest extends TestCase
 {
     /**
      * @return void
-     * @throws RandomException
+     * @throws Exception
      */
     public static function setUpBeforeClass(): void
     {

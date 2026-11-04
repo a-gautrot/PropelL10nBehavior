@@ -2,11 +2,18 @@
 
 declare(strict_types=1);
 
+use Gautrot\Propel\Behavior\L10n\Tests\GenerationTest;
+use Gautrot\Propel\Behavior\L10n\Tests\Model\BookQueryTest;
+use Gautrot\Propel\Behavior\L10n\Tests\Model\LocaleParameterTest;
+use Gautrot\Propel\Behavior\L10n\Tests\Model\ProductTest;
+use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
+
 require_once dirname(__DIR__) . '/tests/bootstrap.php';
 require_once dirname(__DIR__) . '/tests/model/BookQueryTest.php';
 require_once dirname(__DIR__) . '/tests/model/ProductTest.php';
 require_once dirname(__DIR__) . '/tests/model/LocaleParameterTest.php';
 require_once dirname(__DIR__) . '/tests/QuerySecurityTest.php';
+require_once dirname(__DIR__) . '/tests/GenerationTest.php';
 
 // Export actual generated sources before QuickBuilder replaces its virtual filesystem.
 $directory = dirname(__DIR__) . '/.phpstan.cache/models';
@@ -17,10 +24,16 @@ $nullableContracts = [];
 $previousDsn = getenv('TEST_DSN');
 putenv('TEST_DSN=sqlite::memory:');
 try {
-    foreach ([\model\BookQueryTest::class, \model\ProductTest::class,
-        \model\LocaleParameterTest::class, \QuerySecurityTest::class] as $fixture) {
+    $fixtures = [
+        BookQueryTest::class => 'setUpBeforeClass',
+        ProductTest::class => 'setUpBeforeClass',
+        LocaleParameterTest::class => 'setUpBeforeClass',
+        QuerySecurityTest::class => 'setUpBeforeClass',
+        GenerationTest::class => 'buildModels',
+    ];
+    foreach ($fixtures as $fixture => $build) {
         $before = get_declared_classes();
-        $fixture::setUpBeforeClass();
+        $fixture::$build();
         $copied = [];
         foreach (array_diff(get_declared_classes(), $before) as $class) {
             $file = (new ReflectionClass($class))->getFileName();
@@ -37,8 +50,8 @@ try {
         foreach (array_diff(get_declared_classes(), $before) as $class) {
             $reflection = new ReflectionClass($class);
             if ($reflection->isAbstract() || !$reflection->implementsInterface(
-                \Propel\Runtime\ActiveRecord\ActiveRecordInterface::class
-            )) {
+                    ActiveRecordInterface::class
+                )) {
                 continue;
             }
             $instance = $reflection->newInstance();

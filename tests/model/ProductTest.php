@@ -10,7 +10,7 @@ use Product;
 use ProductI18nQuery;
 use ProductQuery;
 use Propel\Runtime\Exception\PropelException;
-use Random\RandomException;
+use Exception;
 
 /**
  * # ProductTest
@@ -19,7 +19,7 @@ class ProductTest extends TestCase
 {
     /**
      * @return void
-     * @throws RandomException
+     * @throws Exception
      */
     public static function setUpBeforeClass(): void
     {

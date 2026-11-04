@@ -7,7 +7,7 @@ use CultureAliasArticleQuery;
 use Gautrot\Propel\Behavior\L10n\PropelL10n;
 use PHPUnit\Framework\TestCase;
 use Gautrot\Propel\Behavior\L10n\Tests\SchemaBuilder;
-use Random\RandomException;
+use Exception;
 use ReflectionException;
 use ReflectionMethod;
 
@@ -18,7 +18,7 @@ class LocaleParameterTest extends TestCase
 {
     /**
      * @return void
-     * @throws RandomException
+     * @throws Exception
      */
     public static function setUpBeforeClass(): void
     {

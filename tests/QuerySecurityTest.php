@@ -4,7 +4,6 @@ use Gautrot\Propel\Behavior\L10n\PropelL10n;
 use Gautrot\Propel\Behavior\L10n\Tests\SchemaBuilder;
 use PHPUnit\Framework\TestCase;
 use Propel\Runtime\ActiveQuery\Criteria;
-use Random\RandomException;
 
 /**
  * # QuerySecurityTest
@@ -13,7 +12,7 @@ final class QuerySecurityTest extends TestCase
 {
     /**
      * @return void
-     * @throws RandomException
+     * @throws Exception
      */
     public static function setUpBeforeClass(): void
     {

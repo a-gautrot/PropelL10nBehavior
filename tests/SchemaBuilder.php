@@ -14,7 +14,7 @@ use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
 use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\Connection\ConnectionWrapper;
-use Random\RandomException;
+use Exception;
 use RuntimeException;
 
 /**
@@ -26,7 +26,7 @@ final class SchemaBuilder
     /**
      * @param string $schema
      * @return ConnectionWrapper
-     * @throws RandomException
+     * @throws Exception
      */
     public static function buildSchema(string $schema): ConnectionWrapper
     {
