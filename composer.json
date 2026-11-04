@@ -25,7 +25,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "Gossi\\Propel\\Behavior\\L10n\\": "src"
+      "Gautrot\\Propel\\Behavior\\L10n\\": "src"
     }
   },
   "require": {
@@ -50,13 +50,18 @@
   },
   "extra": {
     "name": "l10n",
-    "class": "\\Gossi\\Propel\\Behavior\\L10n\\L10nBehavior"
+    "class": "\\Gautrot\\Propel\\Behavior\\L10n\\L10nBehavior"
   },
   "scripts": {
     "test": "@php tests/run.php",
     "test:coverage": "@test --coverage-clover tests/coverage.xml --log-junit tests/junit.xml",
-    "phpstan": "vendor/bin/phpstan analyse -c phpstan.dist.neon",
+    "phpstan": [
+      "@php analysis/generate-models.php",
+      "vendor/bin/phpstan analyse -c phpstan.dist.neon --memory-limit=512M"
+    ],
     "psalm": "vendor/bin/psalm --config=psalm.dist.xml",
-    "phpcs": "phpcs --standard=PSR2 src"
+    "phpcs": "phpcs --standard=PSR2 src",
+    "rector": "rector process --config=rector.php --dry-run",
+    "rector:fix": "rector process --config=rector.php"
   }
 }

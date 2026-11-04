@@ -1,6 +1,6 @@
 <?php
 
-use Gossi\Propel\Behavior\L10n\PropelL10n;
+use Gautrot\Propel\Behavior\L10n\PropelL10n;
 use PHPUnit\Framework\TestCase;
 
 /**

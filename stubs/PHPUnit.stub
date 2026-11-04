@@ -1,0 +1,61 @@
+<?php
+
+namespace PHPUnit\Framework;
+
+// Cross-version signatures: mixed is native only since PHP 8.
+// These declarations describe PHPUnit's actual public assertion contracts.
+class Assert
+{
+    /** @return never */
+    public static function fail(string $message = ''): void {}
+    /**
+     * @template T of object
+     * @param class-string<T> $expected
+     * @param mixed $actual
+     * @phpstan-assert T $actual
+     */
+    public static function assertInstanceOf(string $expected, $actual, string $message = ''): void {}
+
+    /** @param mixed $expected @param mixed $actual */
+    public static function assertSame($expected, $actual, string $message = ''): void {}
+    /** @param mixed $expected @param mixed $actual */
+    public static function assertNotSame($expected, $actual, string $message = ''): void {}
+    /** @param mixed $expected @param mixed $actual */
+    public static function assertEquals($expected, $actual, string $message = ''): void {}
+    /**
+     * @param mixed $actual
+     * @phpstan-assert null $actual
+     */
+    public static function assertNull($actual, string $message = ''): void {}
+    /**
+     * @param mixed $actual
+     * @phpstan-assert !null $actual
+     */
+    public static function assertNotNull($actual, string $message = ''): void {}
+    /**
+     * @param mixed $condition
+     * @phpstan-assert true $condition
+     */
+    public static function assertTrue($condition, string $message = ''): void {}
+    /**
+     * @param mixed $needle
+     * @param iterable<mixed> $haystack
+     */
+    public static function assertContains($needle, iterable $haystack, string $message = ''): void {}
+    /** @param \Countable|iterable<mixed> $haystack */
+    public static function assertCount(int $expectedCount, $haystack, string $message = ''): void {}
+    public static function assertStringContainsString(string $needle, string $haystack, string $message = ''): void {}
+    public static function assertStringNotContainsString(string $needle, string $haystack, string $message = ''): void {}
+}
+
+namespace PHPUnit\TextUI;
+
+class Command
+{
+    public static function main(bool $exit = true): int {}
+}
+class Application
+{
+    /** @param list<string> $argv */
+    public function run(array $argv): int {}
+}

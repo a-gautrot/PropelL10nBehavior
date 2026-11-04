@@ -12,7 +12,7 @@ echo <<<PHP
      WHERE $columnName LIKE '%fooValue%'
  * </code>
  *
- * @param string|string[] \$$columnName The value to use as filter.
+ * @param string|string[]|null \$$columnName The value to use as filter.
  *          Accepts wildcards (* and % trigger a LIKE)
  * @param string|null \$comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
  * @param string|null \$$localeVariableName Overwrites the locale for this filter
@@ -22,6 +22,8 @@ echo <<<PHP
  */
 public function filterBy$columnPhpName(\$$columnName, ?string \$comparison = null, ?string \$$localeVariableName = null): $queryClass
 {
+    \$comparison = \\Gautrot\\Propel\\Behavior\\L10n\\QueryValidator::comparison(\$comparison);
+
     if (\$$localeVariableName === null) {
         \$$localeVariableName = \$this->resolveLocale(\$$localeVariableName);
     }

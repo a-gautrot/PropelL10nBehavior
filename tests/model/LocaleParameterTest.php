@@ -1,12 +1,13 @@
 <?php
 
-namespace model;
+namespace Gautrot\Propel\Behavior\L10n\Tests\Model;
 
 use CultureAliasArticle;
 use CultureAliasArticleQuery;
-use Gossi\Propel\Behavior\L10n\PropelL10n;
+use Gautrot\Propel\Behavior\L10n\PropelL10n;
 use PHPUnit\Framework\TestCase;
-use Gossi\Propel\Behavior\L10n\Tests\SchemaBuilder;
+use Gautrot\Propel\Behavior\L10n\Tests\SchemaBuilder;
+use Random\RandomException;
 use ReflectionException;
 use ReflectionMethod;
 
@@ -17,6 +18,7 @@ class LocaleParameterTest extends TestCase
 {
     /**
      * @return void
+     * @throws RandomException
      */
     public static function setUpBeforeClass(): void
     {
@@ -63,7 +65,7 @@ XML;
      * @return void
      * @throws ReflectionException
      */
-    public function testObjectParameterNamesFollowAliasOrColumn(): void
+    public function testObjectParameters(): void
     {
         $models = [
             'DefaultLocaleArticle' => 'locale',
@@ -144,6 +146,9 @@ XML;
         $context = $className . '::' . $methodName;
 
         self::assertSame($expectedParameter, $parameter->getName(), $context);
+        if ($method->getDocComment() === false) {
+            throw new ReflectionException('Missing locale parameter documentation for ' . $context);
+        }
         self::assertStringContainsString('$' . $expectedParameter, $method->getDocComment(), $context);
     }
 
@@ -151,7 +156,7 @@ XML;
      * @return void
      * @throws ReflectionException
      */
-    public function testQueryParameterNamesFollowAliasOrColumn(): void
+    public function testQueryParameters(): void
     {
         $queries = [
             'DefaultLocaleArticleQuery' => 'locale',
@@ -183,7 +188,7 @@ XML;
     /**
      * @return void
      */
-    public function testCultureAliasTranslationAndQueries(): void
+    public function testCultureAlias(): void
     {
         PropelL10n::setLocale('en');
         PropelL10n::setFallback('en');

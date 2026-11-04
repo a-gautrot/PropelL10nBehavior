@@ -4,7 +4,12 @@
     <projectFiles>
         <directory name="src"/>
         <ignoreFiles>
+            <directory name="templates"/>
             <directory name="vendor"/>
         </ignoreFiles>
     </projectFiles>
+    <stubs>
+        <file name="stubs/Propel.stub"/>
+        <file name="stubs/Intl.stub"/>
+    </stubs>
 </psalm>

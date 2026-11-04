@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Gossi\Propel\Behavior\L10n\Tests;
+namespace Gautrot\Propel\Behavior\L10n\Tests;
 
 use DOMDocument;
 use InvalidArgumentException;
@@ -14,17 +14,19 @@ use Propel\Runtime\Adapter\Pdo\MysqlAdapter;
 use Propel\Runtime\Adapter\Pdo\PgsqlAdapter;
 use Propel\Runtime\Adapter\Pdo\SqliteAdapter;
 use Propel\Runtime\Connection\ConnectionWrapper;
+use Random\RandomException;
+use RuntimeException;
 
 /**
  * # SchemaBuilder
- * Builds the fixtures against the database selected by TEST_DSN.
+ * Builds the fixtures against the database selected by TEST_DSN
  */
 final class SchemaBuilder
 {
     /**
      * @param string $schema
      * @return ConnectionWrapper
-     * @throws \Random\RandomException
+     * @throws RandomException
      */
     public static function buildSchema(string $schema): ConnectionWrapper
     {
@@ -68,7 +70,11 @@ final class SchemaBuilder
 
         $builder = new QuickBuilder();
         $builder->setPlatform($platform);
-        $builder->setSchema($document->saveXML());
+        $xml = $document->saveXML();
+        if ($xml === false) {
+            throw new RuntimeException('Unable to serialize the fixture schema.');
+        }
+        $builder->setSchema($xml);
 
         return $builder->build($dsn, (getenv('TEST_USER')) ?: null, (getenv('TEST_PASSWORD')) ?: null, $adapter);
     }

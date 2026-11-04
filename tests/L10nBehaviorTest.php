@@ -1,6 +1,9 @@
 <?php
 
-use Gossi\Propel\Behavior\L10n\L10nBehavior;
+namespace Gautrot\Propel\Behavior\L10n\Tests;
+
+use Gautrot\Propel\Behavior\L10n\L10nBehavior;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -32,7 +35,7 @@ class L10nBehaviorTest extends TestCase
     /**
      * @return void
      */
-    public function testRejectsCodeInLocaleAlias(): void
+    public function testInvalidAlias(): void
     {
         $behavior = new L10nBehavior();
         $parameters = $behavior->getParameters();

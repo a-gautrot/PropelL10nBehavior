@@ -1,0 +1,48 @@
+<?php
+
+namespace Propel\Generator\Model;
+
+class Behavior
+{
+    /** @var Table|null */
+    protected $table = null;
+    /** @var Database|null */
+    protected $database = null;
+    /** @var string|null */
+    protected $id = null;
+    /** @var string|null */
+    protected $name = null;
+    /** @return object */
+    public function getObjectBuilderModifier() {}
+    /** @return object */
+    public function getQueryBuilderModifier() {}
+}
+class Table {}
+class Database {}
+
+namespace Propel\Generator\Behavior\I18n;
+
+class I18nBehavior
+{
+    /** @var \Propel\Generator\Model\Table|null */
+    protected $i18nTable = null;
+    /** @return I18nBehaviorObjectBuilderModifier */
+    public function getObjectBuilderModifier() {}
+    /** @return I18nBehaviorQueryBuilderModifier */
+    public function getQueryBuilderModifier() {}
+}
+class I18nBehaviorObjectBuilderModifier
+{
+    /** @var \Propel\Generator\Builder\Om\ObjectBuilder|null */
+    protected $builder = null;
+}
+class I18nBehaviorQueryBuilderModifier
+{
+    /** @var \Propel\Generator\Builder\Om\QueryBuilder|null */
+    protected $builder = null;
+}
+
+namespace Propel\Generator\Builder\Om;
+
+class ObjectBuilder {}
+class QueryBuilder {}

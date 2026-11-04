@@ -1,28 +1,42 @@
 <?php
 
-namespace Gossi\Propel\Behavior\L10n;
+namespace Gautrot\Propel\Behavior\L10n;
 
+use LogicException;
+use Override;
 use Propel\Generator\Behavior\I18n\I18nBehaviorQueryBuilderModifier;
 use Propel\Generator\Builder\Om\QueryBuilder;
 use Propel\Generator\Model\Column;
 
 /**
  * # L10nBehaviorQueryBuilderModifier
+ * @api
  */
 class L10nBehaviorQueryBuilderModifier extends I18nBehaviorQueryBuilderModifier
 {
     use RenderTrait;
 
     /**
-     * @var L10nBehavior
+     * @return QueryBuilder
      */
-    protected $behavior;
+    protected function getQueryBuilder(): QueryBuilder
+    {
+        $builder = $this->builder;
+        if ($builder === null) {
+            throw new LogicException('The localization QueryBuilder has not been initialized.');
+        }
+
+        return $builder;
+    }
+
+
 
     /**
      * @param QueryBuilder $builder
      *
      * @return string
      */
+    #[Override]
     public function queryMethods(QueryBuilder $builder): string
     {
         $builder->declareClass(PropelL10n::class);
@@ -31,14 +45,14 @@ class L10nBehaviorQueryBuilderModifier extends I18nBehaviorQueryBuilderModifier
         $script .= $this->addSetLocale();
         $script .= $this->addGetLocale();
 
-        if ($alias = $this->behavior->getParameter('locale_alias')) {
-            $script .= $this->addGetLocaleAlias((string)$alias);
-            $script .= $this->addSetLocaleAlias((string)$alias);
+        if ($alias = $this->getL10nBehavior()->getLocaleAlias()) {
+            $script .= $this->addGetLocaleAlias($alias);
+            $script .= $this->addSetLocaleAlias($alias);
         }
 
         $script .= $this->addResolveLocale();
 
-        foreach ($this->behavior->getI18nColumns() as $column) {
+        foreach ($this->getL10nBehavior()->getI18nColumns() as $column) {
             $script .= $this->addFilter($column);
             $script .= $this->addFind($column);
             $script .= $this->addFindOne($column);
@@ -63,8 +77,10 @@ class L10nBehaviorQueryBuilderModifier extends I18nBehaviorQueryBuilderModifier
         return $this->renderTemplate(
             'objectSetLocale',
             [
-                'objectClassName' => $this->builder->getClassNameFromBuilder($this->builder->getStubObjectBuilder()),
-                'localeColumnName' => $this->behavior->getLocaleColumn()->getPhpName(),
+                'objectClassName' => $this->getQueryBuilder()->getClassNameFromBuilder(
+                    $this->getQueryBuilder()->getStubObjectBuilder()
+                ),
+                'localeColumnName' => $this->getL10nBehavior()->getLocaleColumn()->getPhpName(),
             ]
         );
     }
@@ -77,7 +93,7 @@ class L10nBehaviorQueryBuilderModifier extends I18nBehaviorQueryBuilderModifier
         return $this->renderTemplate(
             'objectGetLocale',
             [
-                'localeColumnName' => $this->behavior->getLocaleColumn()->getPhpName(),
+                'localeColumnName' => $this->getL10nBehavior()->getLocaleColumn()->getPhpName(),
             ]
         );
     }
@@ -90,7 +106,7 @@ class L10nBehaviorQueryBuilderModifier extends I18nBehaviorQueryBuilderModifier
         return $this->renderTemplate(
             'objectResolveLocale',
             [
-                'localeColumnName' => $this->behavior->getLocaleColumn()->getPhpName(),
+                'localeColumnName' => $this->getL10nBehavior()->getLocaleColumn()->getPhpName(),
             ]
         );
     }
@@ -105,7 +121,7 @@ class L10nBehaviorQueryBuilderModifier extends I18nBehaviorQueryBuilderModifier
             'objectGetLocaleAlias',
             [
                 'alias' => ucfirst($alias),
-                'localeColumnName' => $this->behavior->getLocaleColumn()->getPhpName(),
+                'localeColumnName' => $this->getL10nBehavior()->getLocaleColumn()->getPhpName(),
             ]
         );
     }
@@ -119,9 +135,11 @@ class L10nBehaviorQueryBuilderModifier extends I18nBehaviorQueryBuilderModifier
         return $this->renderTemplate(
             'objectSetLocaleAlias',
             [
-                'objectClassName' => $this->builder->getClassNameFromBuilder($this->builder->getStubObjectBuilder()),
+                'objectClassName' => $this->getQueryBuilder()->getClassNameFromBuilder(
+                    $this->getQueryBuilder()->getStubObjectBuilder()
+                ),
                 'alias' => ucfirst($alias),
-                'localeColumnName' => $this->behavior->getLocaleColumn()->getPhpName(),
+                'localeColumnName' => $this->getL10nBehavior()->getLocaleColumn()->getPhpName(),
             ]
         );
     }
@@ -135,10 +153,10 @@ class L10nBehaviorQueryBuilderModifier extends I18nBehaviorQueryBuilderModifier
         return $this->renderTemplate(
             'queryFilter',
             [
-                'queryClass' => $this->builder->getQueryClassName(),
+                'queryClass' => $this->getQueryBuilder()->getQueryClassName(),
                 'columnPhpName' => $column->getPhpName(),
                 'columnName' => $column->getName(),
-                'localeColumnName' => $this->behavior->getLocaleColumn()->getPhpName(),
+                'localeColumnName' => $this->getL10nBehavior()->getLocaleColumn()->getPhpName(),
             ]
         );
     }
@@ -152,10 +170,12 @@ class L10nBehaviorQueryBuilderModifier extends I18nBehaviorQueryBuilderModifier
         return $this->renderTemplate(
             'queryFind',
             [
-                'objectClassName' => $this->builder->getClassNameFromBuilder($this->builder->getStubObjectBuilder()),
+                'objectClassName' => $this->getQueryBuilder()->getClassNameFromBuilder(
+                    $this->getQueryBuilder()->getStubObjectBuilder()
+                ),
                 'columnPhpName' => $column->getPhpName(),
                 'columnName' => $column->getName(),
-                'localeColumnName' => $this->behavior->getLocaleColumn()->getPhpName(),
+                'localeColumnName' => $this->getL10nBehavior()->getLocaleColumn()->getPhpName(),
             ]
         );
     }
@@ -169,10 +189,12 @@ class L10nBehaviorQueryBuilderModifier extends I18nBehaviorQueryBuilderModifier
         return $this->renderTemplate(
             'queryFindOne',
             [
-                'objectClassName' => $this->builder->getClassNameFromBuilder($this->builder->getStubObjectBuilder()),
+                'objectClassName' => $this->getQueryBuilder()->getClassNameFromBuilder(
+                    $this->getQueryBuilder()->getStubObjectBuilder()
+                ),
                 'columnPhpName' => $column->getPhpName(),
                 'columnName' => $column->getName(),
-                'localeColumnName' => $this->behavior->getLocaleColumn()->getPhpName(),
+                'localeColumnName' => $this->getL10nBehavior()->getLocaleColumn()->getPhpName(),
             ]
         );
     }
@@ -180,16 +202,17 @@ class L10nBehaviorQueryBuilderModifier extends I18nBehaviorQueryBuilderModifier
     /**
      * @return string
      */
+    #[Override]
     protected function addJoinI18n(): string
     {
-        $fk = $this->behavior->getI18nForeignKey();
+        $fk = $this->getL10nBehavior()->getI18nForeignKey();
 
         return $this->renderTemplate(
             'queryJoinI18n',
             [
-                'queryClass' => $this->builder->getQueryClassName(),
-                'i18nRelationName' => $this->builder->getRefFKPhpNameAffix($fk),
-                'localeColumn' => $this->behavior->getLocaleColumn()->getPhpName(),
+                'queryClass' => $this->getQueryBuilder()->getQueryClassName(),
+                'i18nRelationName' => $this->getQueryBuilder()->getRefFKPhpNameAffix($fk),
+                'localeColumn' => $this->getL10nBehavior()->getLocaleColumn()->getPhpName(),
             ]
         );
     }
@@ -197,15 +220,16 @@ class L10nBehaviorQueryBuilderModifier extends I18nBehaviorQueryBuilderModifier
     /**
      * @return string
      */
+    #[Override]
     protected function addJoinWithI18n(): string
     {
-        $fk = $this->behavior->getI18nForeignKey();
+        $fk = $this->getL10nBehavior()->getI18nForeignKey();
 
         return $this->renderTemplate(
             'queryJoinWithI18n',
             [
-                'queryClass' => $this->builder->getQueryClassName(),
-                'i18nRelationName' => $this->builder->getRefFKPhpNameAffix($fk),
+                'queryClass' => $this->getQueryBuilder()->getQueryClassName(),
+                'i18nRelationName' => $this->getQueryBuilder()->getRefFKPhpNameAffix($fk),
             ]
         );
     }
@@ -213,21 +237,22 @@ class L10nBehaviorQueryBuilderModifier extends I18nBehaviorQueryBuilderModifier
     /**
      * @return string
      */
+    #[Override]
     protected function addUseI18nQuery(): string
     {
-        $i18nTable = $this->behavior->getI18nTable();
-        $fk = $this->behavior->getI18nForeignKey();
+        $i18nTable = $this->getL10nBehavior()->getI18nTable();
+        $fk = $this->getL10nBehavior()->getI18nForeignKey();
 
         return $this->renderTemplate(
             'queryUseI18nQuery',
             [
-                'queryClass' => $this->builder->getClassNameFromBuilder(
-                    $this->builder->getNewStubQueryBuilder($i18nTable)
+                'queryClass' => $this->getQueryBuilder()->getClassNameFromBuilder(
+                    $this->getQueryBuilder()->getNewStubQueryBuilder($i18nTable)
                 ),
-                'namespacedQueryClass' => $this->builder->getNewStubQueryBuilder($i18nTable)
+                'namespacedQueryClass' => $this->getQueryBuilder()->getNewStubQueryBuilder($i18nTable)
                     ->getFullyQualifiedClassName(),
-                'i18nRelationName' => $this->builder->getRefFKPhpNameAffix($fk),
-                'localeColumn' => $this->behavior->getLocaleColumn()->getPhpName(),
+                'i18nRelationName' => $this->getQueryBuilder()->getRefFKPhpNameAffix($fk),
+                'localeColumn' => $this->getL10nBehavior()->getLocaleColumn()->getPhpName(),
             ]
         );
     }
