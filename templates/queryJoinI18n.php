@@ -13,6 +13,9 @@ echo <<<PHP
  */
 public function joinI18n(?string \$$localeVariableName = null, ?string \$relationAlias = null, ?string \$joinType = Criteria::LEFT_JOIN): $queryClass
 {
+    \$joinType = \\Gautrot\\Propel\\Behavior\\L10n\\QueryValidator::joinType(\$joinType);
+    \\Gautrot\\Propel\\Behavior\\L10n\\QueryValidator::alias(\$relationAlias);
+
     if (\$$localeVariableName === null) {
         \$$localeVariableName = \$this->resolveLocale(\$$localeVariableName);
     }

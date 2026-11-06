@@ -1,6 +1,8 @@
 <?php
 
-namespace Gossi\Propel\Behavior\L10n;
+namespace Gautrot\Propel\Behavior\L10n;
+
+use LogicException;
 
 /**
  * # RenderTrait
@@ -8,17 +10,31 @@ namespace Gossi\Propel\Behavior\L10n;
 trait RenderTrait
 {
     /**
-     * @param $name
-     * @param array $vars
+     * @return L10nBehavior
+     */
+    protected function getL10nBehavior(): L10nBehavior
+    {
+        if (!$this->behavior instanceof L10nBehavior) {
+            throw new LogicException('Localization generation requires an L10n behavior.');
+        }
+
+        return $this->behavior;
+    }
+
+    /**
+     * @param string $name
+     * @param array<string, mixed> $vars
      * @return string
      */
-    protected function renderTemplate($name, array $vars = []): string
+    protected function renderTemplate(string $name, array $vars = []): string
     {
-        $vars['localeVariableName'] = $this->behavior->getLocaleVariableName();
-        $this->behavior->backupTemplatesDirname();
-        $template = $this->behavior->renderTemplate($name, $vars);
-        $this->behavior->restoreTemplatesDirname();
+        $vars['localeVariableName'] = $this->getL10nBehavior()->getLocaleVariableName();
+        $this->getL10nBehavior()->backupTemplatesDirname();
 
-        return $template;
+        try {
+            return $this->getL10nBehavior()->renderTemplate($name, $vars);
+        } finally {
+            $this->getL10nBehavior()->restoreTemplatesDirname();
+        }
     }
 }

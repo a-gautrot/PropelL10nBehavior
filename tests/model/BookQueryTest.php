@@ -1,16 +1,16 @@
 <?php
 
-namespace model;
+namespace Gautrot\Propel\Behavior\L10n\Tests\Model;
 
 use Book;
 use BookI18nQuery;
 use BookQuery;
-use Gossi\Propel\Behavior\L10n\PropelL10n;
-use Gossi\Propel\Behavior\L10n\Tests\SchemaBuilder;
+use Gautrot\Propel\Behavior\L10n\PropelL10n;
+use Gautrot\Propel\Behavior\L10n\Tests\SchemaBuilder;
 use Map\BookTableMap;
 use PHPUnit\Framework\TestCase;
 use Propel\Runtime\Exception\PropelException;
-use Random\RandomException;
+use Exception;
 
 /**
  * # BookQueryTest
@@ -19,23 +19,23 @@ class BookQueryTest extends TestCase
 {
     /**
      * @return void
-     * @throws RandomException
+     * @throws Exception
      */
     public static function setUpBeforeClass(): void
     {
         if (!class_exists(Book::class)) {
             $schema = <<<XML
 <database name="l10n_behavior" defaultIdMethod="native">
-	<table name="book">
-		<column name="id" required="true" primaryKey="true" autoIncrement="true" type="integer" />
-		<column name="title" type="varchar" required="true" />
-		<column name="author" type="varchar" />
-	
-		<behavior name="l10n">
+    <table name="book">
+        <column name="id" required="true" primaryKey="true" autoIncrement="true" type="integer" />
+        <column name="title" type="varchar" required="true" />
+        <column name="author" type="varchar" />
+    
+        <behavior name="l10n">
             <parameter name="locale_length" value="35" />
-			<parameter name="i18n_columns" value="title" />
-		</behavior>
-	</table>
+            <parameter name="i18n_columns" value="title" />
+        </behavior>
+    </table>
 </database>
 XML;
 
@@ -130,7 +130,7 @@ XML;
     /**
      * @return void
      */
-    public function testFilterLocaleResolution(): void
+    public function testFilterLocale(): void
     {
         $scenarios = [
             'global locale' => [null, null, 'en', 'Lord of the Rings'],
@@ -158,7 +158,7 @@ XML;
     /**
      * @return void
      */
-    public function testJoinI18nLocaleResolution(): void
+    public function testJoinLocale(): void
     {
         $scenarios = [
             'global locale' => [null, null, 'en', 'Lord of the Rings'],
@@ -187,7 +187,7 @@ XML;
     /**
      * @return void
      */
-    public function testJoinWithI18nLocaleResolution(): void
+    public function testEagerJoinLocale(): void
     {
         $scenarios = [
             'global locale' => [null, null, 'en'],
@@ -210,6 +210,7 @@ XML;
 
             self::assertNotNull($book);
             self::assertCount(1, $book->getBookI18ns());
+            self::assertInstanceOf(\BookI18n::class, $book->getBookI18ns()->getFirst());
             self::assertSame($expectedLocale, $book->getBookI18ns()->getFirst()->getLocale());
             self::assertSame($currentLocale, $query->getLocale());
         }
@@ -218,7 +219,7 @@ XML;
     /**
      * @return void
      */
-    public function testUseI18nQueryLocaleResolution(): void
+    public function testQueryLocale(): void
     {
         $scenarios = [
             'global locale' => [null, null, 'en', 'Lord of the Rings'],

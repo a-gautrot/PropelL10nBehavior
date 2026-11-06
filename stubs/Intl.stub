@@ -1,0 +1,13 @@
+<?php
+
+// Intl contracts across the supported PHP versions (see the PHP manual).
+class Locale
+{
+    /** @return array<string, string>|null */
+    public static function parseLocale(string $locale) {}
+    /**
+     * @param array<string, string|list<string>> $subtags
+     * @return string|false
+     */
+    public static function composeLocale(array $subtags) {}
+}

@@ -1,16 +1,18 @@
 <?php
 
-namespace Gossi\Propel\Behavior\L10n;
+namespace Gautrot\Propel\Behavior\L10n;
 
 use Locale;
+use InvalidArgumentException;
 
 /**
  * # PropelL10n
+ * @api
  */
 class PropelL10n
 {
     /**
-     * @var array<string, mixed>
+     * @var array<string, string>
      */
     private static array $dependencies = [];
 
@@ -47,11 +49,23 @@ class PropelL10n
 
     /**
      * @param string $locale
-     * @return array|false|string|string[]
+     * @return string
      */
-    public static function normalize(string $locale)
+    public static function normalize(string $locale): string
     {
-        return str_replace('_', '-', Locale::composeLocale(Locale::parseLocale($locale)));
+        $parts = Locale::parseLocale($locale);
+
+        if ($parts === null || !isset($parts['language'])) {
+            throw new InvalidArgumentException('The locale must contain a language.');
+        }
+
+        $normalized = Locale::composeLocale($parts);
+
+        if ($normalized === false) {
+            throw new InvalidArgumentException('The locale cannot be normalized.');
+        }
+
+        return str_replace('_', '-', $normalized);
     }
 
     /**
@@ -89,7 +103,7 @@ class PropelL10n
     /**
      * Returns the current dependencies
      *
-     * @return array
+     * @return array<string, string>
      */
     public static function getDependencies(): array
     {
@@ -103,7 +117,7 @@ class PropelL10n
      *
      * which means de-DE depends on en-US and de-CH depends on de-DE.
      *
-     * @param array $dependencies
+     * @param array<string, string> $dependencies
      * @return void
      */
     public static function setDependencies(array $dependencies): void
@@ -111,7 +125,7 @@ class PropelL10n
         self::$dependencies = [];
 
         foreach ($dependencies as $k => $v) {
-            self::addDependency((string)$k, (string)$v);
+            self::addDependency($k, $v);
         }
     }
 
@@ -139,11 +153,7 @@ class PropelL10n
     {
         $locale = PropelL10n::normalize($locale);
 
-        if (self::hasDependency($locale)) {
-            return self::$dependencies[$locale];
-        }
-
-        return null;
+        return self::$dependencies[$locale] ?? null;
     }
 
     /**
@@ -204,11 +214,11 @@ class PropelL10n
      */
     private static function addParentLocales(array &$locales, string $locale): void
     {
-        $separator = strrpos($locale, '-');
+        $parts = explode('-', $locale);
 
-        if ($separator !== false) {
-            $locale = substr($locale, 0, $separator);
-            $locales[] = $locale;
+        if (count($parts) > 1) {
+            array_pop($parts);
+            $locales[] = implode('-', $parts);
         }
     }
 

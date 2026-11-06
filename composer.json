@@ -3,11 +3,7 @@
   "description": "Integration of localization (l10n) in Propel",
   "type": "propel-behavior",
   "license": "MIT",
-  "keywords": [
-    "propel",
-    "behavior",
-    "l10n"
-  ],
+  "keywords": ["propel", "behavior", "l10n"],
   "authors": [
     {
       "name": "Thomas Gossmann",
@@ -25,12 +21,13 @@
   ],
   "autoload": {
     "psr-4": {
-      "Gossi\\Propel\\Behavior\\L10n\\": "src"
+      "Gautrot\\Propel\\Behavior\\L10n\\": "src"
     }
   },
   "require": {
     "php": "^7.4||>=8.0",
     "ext-intl": "*",
+    "ext-pdo": "*",
     "propel/propel": "~2.0.0-beta4||^2.0",
     "symfony/polyfill-php80": "^1.33",
     "symfony/polyfill-php81": "^1.33",
@@ -50,13 +47,21 @@
   },
   "extra": {
     "name": "l10n",
-    "class": "\\Gossi\\Propel\\Behavior\\L10n\\L10nBehavior"
+    "class": "\\Gautrot\\Propel\\Behavior\\L10n\\L10nBehavior",
+    "branch-alias": {
+      "dev-main": "1.0.x-dev"
+    }
   },
   "scripts": {
     "test": "@php tests/run.php",
-    "test:coverage": "@test --coverage-clover tests/coverage.xml --log-junit tests/junit.xml",
-    "phpstan": "vendor/bin/phpstan analyse -c phpstan.dist.neon",
+    "test:coverage": "@test --coverage-clover tests/coverage.xml --coverage-text --log-junit tests/junit.xml",
+    "phpstan": [
+      "@php analysis/generate-models.php",
+      "vendor/bin/phpstan analyse -c phpstan.dist.neon --memory-limit=512M"
+    ],
     "psalm": "vendor/bin/psalm --config=psalm.dist.xml",
-    "phpcs": "phpcs --standard=PSR2 src"
+    "phpcs": "phpcs --standard=PSR2 src",
+    "rector": "rector process --config=rector.php --dry-run",
+    "rector:fix": "rector process --config=rector.php"
   }
 }

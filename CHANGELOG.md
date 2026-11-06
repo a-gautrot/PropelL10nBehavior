@@ -18,6 +18,12 @@
 ### General
 
 - Optimized project's lib package with gitattributes
+- Improved generator types of generated templates
+- Improved static analysis of generated templates
+
+### Fixes
+
+- Fixed validation of localized query operators, join types, and aliases
 
 ## 1.0.2
 

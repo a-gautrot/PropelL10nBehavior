@@ -1,16 +1,16 @@
 <?php
 
-namespace model;
+namespace Gautrot\Propel\Behavior\L10n\Tests\Model;
 
-use Gossi\Propel\Behavior\L10n\PropelL10n;
-use Gossi\Propel\Behavior\L10n\Tests\SchemaBuilder;
+use Gautrot\Propel\Behavior\L10n\PropelL10n;
+use Gautrot\Propel\Behavior\L10n\Tests\SchemaBuilder;
 use Map\ProductTableMap;
 use PHPUnit\Framework\TestCase;
 use Product;
 use ProductI18nQuery;
 use ProductQuery;
 use Propel\Runtime\Exception\PropelException;
-use Random\RandomException;
+use Exception;
 
 /**
  * # ProductTest
@@ -19,7 +19,7 @@ class ProductTest extends TestCase
 {
     /**
      * @return void
-     * @throws RandomException
+     * @throws Exception
      */
     public static function setUpBeforeClass(): void
     {
@@ -73,7 +73,7 @@ XML;
         self::assertNull($p->getLocale());
     }
 
-    public function testTranslationAccessPreservesCurrentLocale(): void
+    public function testTranslationLocale(): void
     {
         foreach ([null, 'de'] as $locale) {
             $p = new Product();
@@ -91,7 +91,7 @@ XML;
         }
     }
 
-    public function testPersistedTranslationAccessPreservesCurrentLocale(): void
+    public function testSavedTranslationLocale(): void
     {
         $p = new Product();
         $p->setTitle('delicious', 'en');
@@ -103,6 +103,7 @@ XML;
             ProductTableMap::clearInstancePool();
             $p = ProductQuery::create()->findPk($id);
             self::assertNotNull($p);
+            self::assertInstanceOf(Product::class, $p);
             if ($locale !== null) {
                 $p->setLocale($locale);
             }
@@ -114,7 +115,7 @@ XML;
         }
     }
 
-    public function testTranslationWithoutLocaleUsesCurrentOrGlobalLocale(): void
+    public function testDefaultTranslation(): void
     {
         $p = new Product();
 
@@ -129,7 +130,7 @@ XML;
         self::assertSame('de', $p->getLocale());
     }
 
-    public function testFallbackAccessPreservesCurrentLocale(): void
+    public function testFallbackLocale(): void
     {
         $p = new Product();
         $p->setTitle('delicious', 'en');
@@ -190,7 +191,7 @@ XML;
     /**
      * @return void
      */
-    public function testGetterWithoutLocaleChain(): void
+    public function testSingleLocale(): void
     {
         $p = new Product();
         $p->setTitle('delicious', 'en');
@@ -209,7 +210,7 @@ XML;
     /**
      * @return void
      */
-    public function testGetterWithoutLocaleChainResolvesCurrentOrGlobalLocale(): void
+    public function testDefaultGetterLocale(): void
     {
         $p = new Product();
         $p->setTitle('delicious', 'en');
@@ -230,7 +231,7 @@ XML;
     /**
      * @return void
      */
-    public function testDateGetterWithoutLocaleChain(): void
+    public function testDateLocale(): void
     {
         $p = new Product();
         $p->setPublishedAt('2024-02-03', 'en');
@@ -313,7 +314,7 @@ XML;
     /**
      * @return void
      */
-    public function testRemoveTranslationCurrentOrGlobalLocale(): void
+    public function testDefaultRemoval(): void
     {
         foreach ([null, 'de'] as $locale) {
             $p = new Product();
@@ -324,6 +325,7 @@ XML;
             ProductTableMap::clearInstancePool();
             $p = ProductQuery::create()->findPk($id);
             self::assertNotNull($p);
+            self::assertInstanceOf(Product::class, $p);
             if ($locale !== null) {
                 $p->setLocale($locale);
             }

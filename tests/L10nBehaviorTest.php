@@ -1,6 +1,10 @@
 <?php
 
-use Gossi\Propel\Behavior\L10n\L10nBehavior;
+namespace Gautrot\Propel\Behavior\L10n\Tests;
+
+use Gautrot\Propel\Behavior\L10n\L10nBehavior;
+use Gautrot\Propel\Behavior\L10n\PropelL10n;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -8,6 +12,24 @@ use PHPUnit\Framework\TestCase;
  */
 class L10nBehaviorTest extends TestCase
 {
+    /**
+     * @return void
+     */
+    public function testDefaultLocale(): void
+    {
+        $locale = PropelL10n::getLocale();
+        try {
+            PropelL10n::setLocale('fr');
+            $behavior = new L10nBehavior();
+            $behavior->modifyDatabase();
+            self::assertSame('fr', $behavior->getDefaultLocale());
+            PropelL10n::setLocale('de');
+            self::assertSame('de', $behavior->getDefaultLocale());
+        } finally {
+            PropelL10n::setLocale($locale);
+        }
+    }
+
     /**
      * @return void
      */
@@ -32,7 +54,7 @@ class L10nBehaviorTest extends TestCase
     /**
      * @return void
      */
-    public function testRejectsCodeInLocaleAlias(): void
+    public function testInvalidAlias(): void
     {
         $behavior = new L10nBehavior();
         $parameters = $behavior->getParameters();

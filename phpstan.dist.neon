@@ -1,6 +1,17 @@
 parameters:
 	level: max
 	phpVersion: 70400
+	scanFiles:
+		- stubs/PHPUnit.stub
+	scanDirectories:
+		- .phpstan.cache/models
+	stubFiles:
+		- .phpstan.cache/nullable-getters.stub
+		- stubs/Propel.stub
+		- stubs/Intl.stub
 	paths:
 		- src
 		- tests
+	excludePaths:
+		- templates
+		- vendor

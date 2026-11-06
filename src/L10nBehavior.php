@@ -1,13 +1,18 @@
 <?php
 
-namespace Gossi\Propel\Behavior\L10n;
+namespace Gautrot\Propel\Behavior\L10n;
 
+use Override;
 use InvalidArgumentException;
+use LogicException;
+use Propel\Generator\Model\Column;
+use Propel\Generator\Model\ForeignKey;
 use Propel\Generator\Behavior\I18n\I18nBehavior;
 use Propel\Generator\Builder\Om\AbstractOMBuilder;
 
 /**
  * # L10nBehavior
+ * @api
  */
 class L10nBehavior extends I18nBehavior
 {
@@ -35,13 +40,16 @@ class L10nBehavior extends I18nBehavior
     /**
      * @var L10nBehaviorObjectBuilderModifier|null
      */
-    protected $objectBuilderModifier;
+    private ?L10nBehaviorObjectBuilderModifier $l10nObjectBuilderModifier = null;
 
     /**
      * @var L10nBehaviorQueryBuilderModifier|null
      */
-    protected $queryBuilderModifier;
+    private ?L10nBehaviorQueryBuilderModifier $l10nQueryBuilderModifier = null;
 
+    /**
+     *
+     */
     public function __construct()
     {
         $this->dirname = __DIR__ . DIRECTORY_SEPARATOR;
@@ -50,6 +58,7 @@ class L10nBehavior extends I18nBehavior
     /**
      * @return void
      */
+    #[Override]
     public function modifyDatabase(): void
     {
     }
@@ -57,6 +66,7 @@ class L10nBehavior extends I18nBehavior
     /**
      * @return string
      */
+    #[Override]
     public function getDefaultLocale(): string
     {
         return PropelL10n::getLocale();
@@ -65,9 +75,61 @@ class L10nBehavior extends I18nBehavior
     /**
      * @return string
      */
-    public function getLocaleVariableName(): string
+    public function getLocaleAlias(): string
     {
         $alias = $this->getParameter('locale_alias');
+
+        if (!is_string($alias)) {
+            throw new InvalidArgumentException('The locale alias must be a string.');
+        }
+
+        return $alias;
+    }
+
+    /**
+     * @return Column
+     */
+    #[Override]
+    public function getLocaleColumn(): Column
+    {
+        if ($this->i18nTable === null) {
+            throw new LogicException('The localization table has not been initialized.');
+        }
+
+        $column = parent::getLocaleColumn();
+
+        if ($column === null) {
+            throw new LogicException('The localization locale column has not been initialized.');
+        }
+
+        return $column;
+    }
+
+    /**
+     * @return ForeignKey
+     */
+    #[Override]
+    public function getI18nForeignKey(): ForeignKey
+    {
+        if ($this->i18nTable === null) {
+            throw new LogicException('The localization table has not been initialized.');
+        }
+
+        $foreignKey = parent::getI18nForeignKey();
+
+        if ($foreignKey === null) {
+            throw new LogicException('The localization foreign key has not been initialized.');
+        }
+
+        return $foreignKey;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLocaleVariableName(): string
+    {
+        $alias = $this->getLocaleAlias();
         $localeVariableName = lcfirst($alias ?: $this->getLocaleColumn()->getPhpName());
 
         if (!preg_match('/\A[a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*\z/', $localeVariableName)) {
@@ -78,23 +140,25 @@ class L10nBehavior extends I18nBehavior
     }
 
     /**
-     * @return L10nBehaviorObjectBuilderModifier|null
+     * @return L10nBehaviorObjectBuilderModifier
      */
-    public function getObjectBuilderModifier(): ?L10nBehaviorObjectBuilderModifier
+    #[Override]
+    public function getObjectBuilderModifier(): L10nBehaviorObjectBuilderModifier
     {
-        $this->objectBuilderModifier ??= new L10nBehaviorObjectBuilderModifier($this);
+        $this->l10nObjectBuilderModifier ??= new L10nBehaviorObjectBuilderModifier($this);
 
-        return $this->objectBuilderModifier;
+        return $this->l10nObjectBuilderModifier;
     }
 
     /**
-     * @return L10nBehaviorQueryBuilderModifier|null
+     * @return L10nBehaviorQueryBuilderModifier
      */
-    public function getQueryBuilderModifier(): ?L10nBehaviorQueryBuilderModifier
+    #[Override]
+    public function getQueryBuilderModifier(): L10nBehaviorQueryBuilderModifier
     {
-        $this->queryBuilderModifier ??= new L10nBehaviorQueryBuilderModifier($this);
+        $this->l10nQueryBuilderModifier ??= new L10nBehaviorQueryBuilderModifier($this);
 
-        return $this->queryBuilderModifier;
+        return $this->l10nQueryBuilderModifier;
     }
 
     /**
@@ -102,6 +166,7 @@ class L10nBehavior extends I18nBehavior
      *
      * @return string
      */
+    #[Override]
     public function staticAttributes(AbstractOMBuilder $builder): string
     {
         return $this->renderTemplate('staticAttributes');
