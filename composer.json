@@ -3,11 +3,7 @@
   "description": "Integration of localization (l10n) in Propel",
   "type": "propel-behavior",
   "license": "MIT",
-  "keywords": [
-    "propel",
-    "behavior",
-    "l10n"
-  ],
+  "keywords": ["propel", "behavior", "l10n"],
   "authors": [
     {
       "name": "Thomas Gossmann",
@@ -51,7 +47,10 @@
   },
   "extra": {
     "name": "l10n",
-    "class": "\\Gautrot\\Propel\\Behavior\\L10n\\L10nBehavior"
+    "class": "\\Gautrot\\Propel\\Behavior\\L10n\\L10nBehavior",
+    "branch-alias": {
+      "dev-main": "1.0.x-dev"
+    }
   },
   "scripts": {
     "test": "@php tests/run.php",
