@@ -24,7 +24,7 @@ Or insert the following in `composer.json`:
 ```json
 {
   "require": {
-    "a-gautrot/propel-l10n-behavior": "~dev"
+    "a-gautrot/propel-l10n-behavior": "~1.0"
   }
 }
 ```
