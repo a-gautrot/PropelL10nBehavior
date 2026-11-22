@@ -52,7 +52,6 @@ jobs:
           - ubuntu-26.04-arm
           - windows-2025
           - windows-11-arm
-          - macos-26
         php:
           - '7.4'
           - '8.0'
@@ -61,12 +60,11 @@ jobs:
           - '8.3'
           - '8.4'
           - '8.5'
+          - '8.6'
         include:
           - php: '7.4'
             os: ubuntu-26.04
             dependencies: lowest
-          - php: '8.5'
-            os: macos-26-intel
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -96,8 +94,6 @@ jobs:
           - ubuntu-26.04
           - ubuntu-26.04-arm
           - windows-2025
-          - macos-26
-          - macos-26-intel
         php:
           - '7.4'
           - '8.0'
@@ -106,6 +102,7 @@ jobs:
           - '8.3'
           - '8.4'
           - '8.5'
+          - '8.6'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -119,13 +116,6 @@ jobs:
       - name: Start MySQL with Docker on Linux
         if: runner.os == 'Linux'
         run: docker compose -f tests/compose.yaml up -d --wait mysql
-      - name: Start native MySQL
-        if: runner.os == 'macOS'
-        uses: ankane/setup-mysql@4aa1b08412d4c8bf537fea5bc412e4e831d839d7 # v1
-        with:
-          mysql-version: '8.4'
-          database: l10n_behavior
-          user: ci
       - name: Start MySQL on Windows
         id: mysql_windows
         if: runner.os == 'Windows'
@@ -134,9 +124,9 @@ jobs:
       - name: Test MySQL
         run: composer test
         env:
-          TEST_DSN: mysql:host=127.0.0.1;port=${{ runner.os == 'Linux' && '33371' || runner.os == 'Windows' && '3307' || '3306' }};dbname=l10n_behavior
+          TEST_DSN: mysql:host=127.0.0.1;port=${{ runner.os == 'Linux' && '33371' || '3307' }};dbname=l10n_behavior
           TEST_USER: ${{ runner.os == 'Linux' && 'root' || 'ci' }}
-          TEST_PASSWORD: ${{ runner.os == 'Linux' && 'l10n_test' || runner.os == 'Windows' && steps.mysql_windows.outputs.password || '' }}
+          TEST_PASSWORD: ${{ runner.os == 'Linux' && 'l10n_test' || steps.mysql_windows.outputs.password }}
       - name: Stop MySQL on Windows
         if: ${{ always() && runner.os == 'Windows' }}
         shell: pwsh
@@ -155,8 +145,6 @@ jobs:
           - ubuntu-26.04
           - ubuntu-26.04-arm
           - windows-2025
-          - macos-26
-          - macos-26-intel
         php:
           - '7.4'
           - '8.0'
@@ -165,6 +153,7 @@ jobs:
           - '8.3'
           - '8.4'
           - '8.5'
+          - '8.6'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -179,7 +168,7 @@ jobs:
         if: runner.os == 'Linux'
         run: docker compose -f tests/compose.yaml up -d --wait mariadb
       - name: Start native MariaDB
-        if: runner.os != 'Linux'
+        if: runner.os == 'Windows'
         uses: ankane/setup-mariadb@e34d4859081a8192918ea2302b7c9a71475a0d73 # v1
         with:
           mariadb-version: '11.4'
@@ -205,8 +194,6 @@ jobs:
           - ubuntu-26.04
           - ubuntu-26.04-arm
           - windows-2025
-          - macos-26
-          - macos-26-intel
         php:
           - '7.4'
           - '8.0'
@@ -215,6 +202,7 @@ jobs:
           - '8.3'
           - '8.4'
           - '8.5'
+          - '8.6'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -229,7 +217,7 @@ jobs:
         if: runner.os == 'Linux'
         run: docker compose -f tests/compose.yaml up -d --wait postgres
       - name: Start native PostgreSQL
-        if: runner.os != 'Linux'
+        if: runner.os == 'Windows'
         uses: ankane/setup-postgres@b1a598d92f86cb2ed364411898d150d4eac6d5ca # v1
         with:
           postgres-version: '17'

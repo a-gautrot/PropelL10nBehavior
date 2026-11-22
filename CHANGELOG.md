@@ -13,6 +13,12 @@
 
 ---
 
+## 1.0.4
+
+### General
+
+- Added support for PHP 8.6
+
 ## 1.0.3
 
 ### General

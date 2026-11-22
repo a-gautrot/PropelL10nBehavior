@@ -6,13 +6,11 @@ use Rector\Config\RectorConfig;
 use Rector\DeadCode\Rector\ClassMethod\RemoveArgumentFromDefaultParentCallRector;
 use Rector\DeadCode\Rector\MethodCall\RemoveNullArgOnNullDefaultParamRector;
 use Rector\Symfony\Set\SymfonySetList;
-use Rector\ValueObject\PhpVersion;
 
 return RectorConfig::configure()
     ->withPaths([
         __DIR__ . '/src',
     ])
-    ->withPhpVersion(PhpVersion::PHP_74)
     ->withPhpSets()
     ->withSets([
         SymfonySetList::COMPOSER_BASED,
